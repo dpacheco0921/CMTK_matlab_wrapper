@@ -1,2 +1,2 @@
 # CMTK_matlab_wrapper
-Matlab functions to interphase with CMTK toolbox
+Matlab functions to interface with CMTK toolbox
