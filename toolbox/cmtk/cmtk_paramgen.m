@@ -241,11 +241,11 @@ cmtkpars.padval = [0 0 0]; % order ref, float, out
 % transform traces:
 % gregxform, streamxform
 
-% 7) define process to run
+% 7) define type of registration to run
+%   (to select corresponding default transform directories)
 %   ('ia', initial affine)
 %   ('a', affine)
 %   ('w', warp)
-%   ('r', reformat)
 cmtkpars.rLevel = 'w';
 
 % 8) updating parameters that are mentioned

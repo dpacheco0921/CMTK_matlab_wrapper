@@ -52,8 +52,8 @@ else
 end
 
 % generate deafult directories or pass inputed ones
-gendefaultdir(func2use, oDir, refDir, ...
-    iDir, aDir, xDir, dirpar, intregpar)
+dirpar = gendefaultdir(func2use, oDir, refDir, ...
+    iDir, aDir, xDir, dirpar, intregpar);
 
 switch func2use
     case {'a', 'ia'}
@@ -177,7 +177,10 @@ switch func2use
         % run command
         command2run = dirpar.intfunc{1};
         
-        if ~intregpar.regf2use; command2run = strrep(command2run, 'x', ''); end
+        if ~intregpar.regf2use
+            command2run = strrep(command2run, 'x', '');
+        end
+        
         command2run = [command2run, affine_arg];
         
         if intregpar.initf2use
@@ -261,7 +264,7 @@ if isempty(oIm)
         a_suffix_gen(intregpar, 0), '_', w_suffix_gen(intregpar)]; 
 end
 
-if intregpar.a
+if intregpar.initf2use
     initialxform = [dirpar.aDir, filesep, strrep(refIm, dirpar.fisuffix, ''), ...
         '_', strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
 end
@@ -269,15 +272,18 @@ end
 % run command
 command2run = dirpar.intfunc{2};
 
-if ~intregpar.warpf2use; command2run = strrep(command2run, 'x', ''); end
+if ~intregpar.warpf2use
+    command2run = strrep(command2run, 'x', '');
+end
+
 command2run = [command2run, warp_arg, ' -o ', dirpar.oDir, filesep, oIm, ...
     ' ', dirpar.refDir, filesep, refIm,' ', dirpar.iDir, filesep, iIm];
 
-if intregpar.a && (exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
+if intregpar.initf2use && (exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
     command2run = [command2run, ' ', initialxform];
 end
 
-if intregpar.a && ~(exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
+if intregpar.initf2use && ~(exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
     
     fprintf('Initialxform does not exists \n');
     disp([initialxform, filesep, 'registration'])
@@ -322,23 +328,42 @@ end
 % generate output and xform file name
 % Note: for registration and warp xforms it just require the folder
 % directory, but for init_affine xform it needs the actual file path
+
 if isempty(xform)
-    if strcmp(intregpar.rLevel, 'ia') % init affine
+    
+    if strcmp(intregpar.rLevel, 'ia')
+        
+        % init affine
         xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-            strrep(iIm, dirpar.fisuffix, ''), '_pa.list', filesep, 'registration'];
-    elseif strcmp(intregpar.rLevel, 'a') % affine
+            strrep(iIm, dirpar.fisuffix, ''), '_pa.list', ...
+            filesep, 'registration'];
+        
+    elseif strcmp(intregpar.rLevel, 'a')
+        
+        % affine
         xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-            strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
-    elseif strcmp(intregpar.rLevel, 'w') && intregpar.a % affine and warp
+            strrep(iIm, dirpar.fisuffix, ''), '_', ...
+            a_suffix_gen(intregpar)];
+        
+    elseif strcmp(intregpar.rLevel, 'w') && intregpar.a
+        
+        % affine and warp
         xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-            strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar, 0), ...
+            strrep(iIm, dirpar.fisuffix, ''), '_', ...
+            a_suffix_gen(intregpar, 0), ...
             '_', w_suffix_gen(intregpar)];
-    elseif strcmp(intregpar.rLevel, 'w') && ~intregpar.a % warp only
+        
+    elseif strcmp(intregpar.rLevel, 'w') && ~intregpar.a
+        
+        % warp only
         xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-            strrep(iIm, dirpar.fisuffix, ''), '_', w_suffix_gen];
+            strrep(iIm, dirpar.fisuffix, ''), '_', ...
+            w_suffix_gen];
+        
     else
         fprintf('Error rLevel unknown\n'); return;
     end
+    
 end
 
 % add jacobian suffix
@@ -369,14 +394,18 @@ end
 
 % run command
 if jgate
+    
     command2run = [dirpar.intfunc{3}, reformat_arg, ...
         ' -o ', dirpar.oDir, filesep, oIm, ...
     ' ', dirpar.refDir, filesep, refIm, ' --jacobian'];
+
 else
+    
    command2run = [dirpar.intfunc{3}, reformat_arg, ...
        ' -o ', dirpar.oDir, filesep, oIm, ...
         ' --floating ', dirpar.iDir, filesep, iIm, ...
         ' ', dirpar.refDir, filesep, refIm];
+    
 end
 
 command2run = add_xform(command2run, xform, dirpar.xDir);
@@ -403,7 +432,7 @@ end
 
 % %%%%%%%% Sub-functions %%%%%%%%
 
-function gendefaultdir(func2use, oDir, refDir, ...
+function dirpar = gendefaultdir(func2use, oDir, refDir, ...
     iDir, aDir, xDir, dirpar, intregpar)
 % gendefaultdir: generate default directories
 %
@@ -423,6 +452,7 @@ function gendefaultdir(func2use, oDir, refDir, ...
 
 % oDir
 if isempty(oDir)
+    
     % generate defult output directories
     switch func2use
         case {'a', 'ia'}
@@ -437,13 +467,21 @@ if isempty(oDir)
                 dirpar.oDir = ['.', filesep, 'reformatted'];
             end
     end
-    if exist(fullfile(dirpar.oDir), 'dir')~=7; mkdir(dirpar.oDir); end
+    
+    if exist(fullfile(dirpar.oDir), 'dir')~=7
+        mkdir(dirpar.oDir);
+    end
+    
 else
     dirpar.oDir = oDir;
 end
 
 % refDir
-if isempty(refDir); dirpar.refDir = '.'; else; dirpar.refDir = refDir; end
+if isempty(refDir)
+    dirpar.refDir = '.';
+else
+    dirpar.refDir = refDir;
+end
 
 % aDir
 if isempty(aDir)
@@ -454,15 +492,18 @@ end
 
 % xDir
 if isempty(xDir)
-    itype = intregpar.rLevel;
-    switch itype
+    
+    switch intregpar.rLevel
         case {'ia', 'a'}
             dirpar.xDir = ['.', filesep, 'registration', filesep, 'affine'];
         case 'w'
             dirpar.xDir = ['.', filesep, 'registration', filesep, 'warp'];
     end
+    
 else
+    
     dirpar.xDir = xDir;
+    
 end
 
 % pass iDir
