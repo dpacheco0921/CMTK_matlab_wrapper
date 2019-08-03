@@ -57,24 +57,30 @@ dirpar = gendefaultdir(func2use, oDir, refDir, ...
 
 switch func2use
     case {'a', 'ia'}
+        
         if intregpar.verb
             fprintf('\n ***** Running Affine registration *****\n');
         end
         RunAffine(func2use, iIm, oIm, ...
             refIm, dirpar, intregpar);
+        
     case 'w'
+        
         if intregpar.verb
             fprintf('\n ***** Running Warping *****\n');
         end
         RunWarp(iIm, oIm, refIm, ...
             dirpar, intregpar);
+        
     case {'r', 'rj'}
+        
         if intregpar.verb
             fprintf('\n ***** Running Reformatx *****\n');
         end
         jgate = numel(strfind(func2use, 'j'));
         Runreformat(iIm, oIm, refIm, ...
             xform, jgate, dirpar, intregpar);
+        
 end
 
 if intregpar.verb; fprintf('******** Done ********\n'); end
@@ -264,10 +270,9 @@ if isempty(oIm)
         a_suffix_gen(intregpar, 0), '_', w_suffix_gen(intregpar)]; 
 end
 
-if intregpar.initf2use
-    initialxform = [dirpar.aDir, filesep, strrep(refIm, dirpar.fisuffix, ''), ...
-        '_', strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
-end
+% get default affine transformation name
+affinexform = [dirpar.aDir, filesep, strrep(refIm, dirpar.fisuffix, ''), ...
+    '_', strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
 
 % run command
 command2run = dirpar.intfunc{2};
@@ -279,14 +284,14 @@ end
 command2run = [command2run, warp_arg, ' -o ', dirpar.oDir, filesep, oIm, ...
     ' ', dirpar.refDir, filesep, refIm,' ', dirpar.iDir, filesep, iIm];
 
-if intregpar.initf2use && (exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
-    command2run = [command2run, ' ', initialxform];
+if exist(fullfile([affinexform, filesep, 'registration']), 'file') == 2
+    command2run = [command2run, ' ', affinexform];
 end
 
-if intregpar.initf2use && ~(exist(fullfile([initialxform, filesep, 'registration']), 'file') == 2)
+if ~(exist(fullfile([affinexform, filesep, 'registration']), 'file') == 2)
     
     fprintf('Initialxform does not exists \n');
-    disp([initialxform, filesep, 'registration'])
+    disp([affinexform, filesep, 'registration'])
     
 else
     
@@ -345,20 +350,13 @@ if isempty(xform)
             strrep(iIm, dirpar.fisuffix, ''), '_', ...
             a_suffix_gen(intregpar)];
         
-    elseif strcmp(intregpar.rLevel, 'w') && intregpar.a
+    elseif strcmp(intregpar.rLevel, 'w')
         
         % affine and warp
         xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
             strrep(iIm, dirpar.fisuffix, ''), '_', ...
             a_suffix_gen(intregpar, 0), ...
             '_', w_suffix_gen(intregpar)];
-        
-    elseif strcmp(intregpar.rLevel, 'w') && ~intregpar.a
-        
-        % warp only
-        xform = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-            strrep(iIm, dirpar.fisuffix, ''), '_', ...
-            w_suffix_gen];
         
     else
         fprintf('Error rLevel unknown\n'); return;
@@ -601,7 +599,9 @@ if intregpar.padfloat
     affine_suffix = [affine_suffix, 'pf'];
 end
 
-if intregpar.amatchHist; affine_suffix = [affine_suffix, '_mh']; end
+if intregpar.amatchHist
+    affine_suffix = [affine_suffix, '_mh'];
+end
 
 if suffixgate
     affine_suffix = [affine_suffix, '.list'];
