@@ -89,7 +89,7 @@ cmtkpars.aC = 5;
 % 2.4) Optimization parameters
 
 % --max-stepsize | -e | --exploration: Optimizer step size
-%   it has to be cmtkpars.aAccu*2^n, so in this case 13 (old ~25.6, or 52)
+%   it has to be cmtkpars.aAccu*2^n, so in this case 13
 cmtkpars.aX = 13;
 
 % --min-stepsize | -a | -- accuracy: Final optimizer step size, which determines precision
@@ -149,7 +149,7 @@ cmtkpars.wC = 5;
 cmtkpars.G = '160';
 
 % --grid-refine | --refine: number of refinements (control point grid resolution levels)
-%   (down to ~5 pixels (from 40 to 5)) in this case will be ~6.25
+%   in this case cmtkpars.G/2^cmtkpars.R ~ 5um
 cmtkpars.R = '5';
 
 % computation mode
@@ -182,6 +182,7 @@ cmtkpars.rToUnfold = 0;
 % 3.5) Optimization parameters
 
 % --max-stepsize | -e | --exploration: Optimizer step size
+%   it should be ~1/3 of grid spacing
 cmtkpars.wX = 13;
 
 % --min-stepsize | -a | -- accuracy: Final optimizer step size, which determines precision
