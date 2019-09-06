@@ -17,7 +17,8 @@ function [ppobj, ppprofile] = setup_parpool(deviceID, corenum)
 if ~exist('deviceID', 'var') || isempty(deviceID); deviceID = []; end
 if ~exist('corenum', 'var') || isempty(corenum); corenum = 1; end
 
-ppobj = []; ppprofile = [];
+ppobj = [];
+ppprofile = [];
 
 if ispc || ismac || contains(deviceID, 'int')
     

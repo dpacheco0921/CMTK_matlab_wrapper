@@ -14,7 +14,8 @@ function cmtkpars = cmtk_paramgen(iparams, verbose_)
 %   cmtkpars: structure with all cmtk parameters to use
 %
 % Notes:
-% For more information on paramters read manual at https://www.nitrc.org/docman/view.php/212/708/UserGuideCMTK.pdf
+% For more information on paramters read manual at 
+%   https://www.nitrc.org/docman/view.php/212/708/UserGuideCMTK.pdf
 % inspired by https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl
 
 if ~exist('verbose_', 'var') || isempty(verbose_)
