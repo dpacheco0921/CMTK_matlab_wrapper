@@ -30,7 +30,7 @@ function out = cmtk_intfunc(func2use, redo, iIm, oIm, ...
 %   out: suffices of both affine or warp transformations
 %
 % Notes:
-% inspired by https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl
+%   inspired by https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl
 
 if ~exist('iparams', 'var') || isempty(iparams)
     fprintf('generating iparams from default settings\n')
