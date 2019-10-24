@@ -1,5 +1,5 @@
 # CMTK_matlab_wrapper
-Matlab functions to interface with CMTK toolbox
+Matlab functions to interface with CMTK toolbox.
 Inspired by [munger.pl](https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl)
 
 # Organization of data
