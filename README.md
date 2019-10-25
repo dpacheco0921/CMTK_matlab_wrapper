@@ -3,6 +3,12 @@ Matlab functions to interface with CMTK toolbox.
 Inspired by [munger.pl](https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl)
 
 # Organization of data
+- do not use letters for naming files.
+- if using more than one channel:
+    - make a folder 'images' for the reference channel (use to generate trasnformations).
+    - put extra channels in 'images_ch2' and 'images_ch3' (if you have three channels).
+    - all transformations will be saved in 'registration' folder, within 'affine' or 'warp' subfolders for ridig and non-rigid transformations respectively.
+    - when applying transformations they will be saved in reformatted, reformatted_ch2, or reformatted_ch3 depending on the floating channel used.
 
 # Dependencies
 
