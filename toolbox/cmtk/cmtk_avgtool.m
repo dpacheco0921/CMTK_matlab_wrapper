@@ -34,10 +34,23 @@ function cmtk_avgtool(iIm, iDir, oName, oDir, ...
 
 % deafult params
 if ~exist('iIm', 'var'); iIm = []; end
-if ~exist('iDir', 'var') || isempty(iDir); iDir = '.'; end
-if ~exist('oDir', 'var') || isempty(oDir); oDir = '.'; end
-if ~exist('oIm', 'var') || isempty(oIm); oIm = '--avg'; end
-if ~exist('oIm_format', 'var') || isempty(oIm_format); oIm_format = '--float'; end
+
+if ~exist('iDir', 'var') || isempty(iDir)
+    iDir = '.';
+end
+
+if ~exist('oDir', 'var') || isempty(oDir)
+    oDir = '.';
+end
+
+if ~exist('oIm', 'var') || isempty(oIm)
+    oIm = '--avg';
+end
+
+if ~exist('oIm_format', 'var') || isempty(oIm_format)
+    oIm_format = '--float';
+end
+
 % extra filter for iIm
 if ~exist('eiIm', 'var') || isempty(eiIm); eiIm = []; end
 

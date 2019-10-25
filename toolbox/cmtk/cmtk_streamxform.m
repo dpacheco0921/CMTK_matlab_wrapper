@@ -43,7 +43,8 @@ refi = strrep(refi, ibpars.imSuffix, '');
 refo = strrep(refo, ibpars.imSuffix, '');
 
 % find xform folder
-xform = cmtk_findxform_coord(refo, refi, ibpars.transform_dir, ibpars.eSuffix);
+xform = cmtk_findxform_coord(refo, refi, ...
+    ibpars.transform_dir, ibpars.eSuffix);
 
 % write text file
 xyz_table = table(xyz(:, 1), xyz(:, 2), xyz(:, 3));

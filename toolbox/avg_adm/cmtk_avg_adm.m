@@ -6,7 +6,8 @@ function cmtk_avg_adm(refiter, inputfiles, refi, oImDir)
 %   cmtk_avg_adm(refiter, inputfiles, refi, oImDir)
 %
 % Args:
-%   refiter: interation number (defines which seed reference brain will use for current averaging)
+%   refiter: interation number
+%       (defines which seed reference brain will use for current averaging)
 %   inputfiles: select files to be used as inputs
 %       (otherwise it uses all files in the hardcoded input folder)
 %		(basically all xforms within 'ixformdir')
@@ -50,8 +51,10 @@ ixform = str2match('.list', ixform);
 ixform = str2match(inputfiles, ixform);
 ixform = {ixform.name};
 ixformall = [];
+
 for i = 1:numel(ixform)
-    ixformall = [ixformall, ' ', ixformdir, filesep, ixform{i}];
+    ixformall = [ixformall, ' ', ...
+        ixformdir, filesep, ixform{i}];
 end
 
 % build arguments

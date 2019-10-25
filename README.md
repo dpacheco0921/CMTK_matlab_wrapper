@@ -1,8 +1,22 @@
 # CMTK_matlab_wrapper
+
 Matlab functions to interface with CMTK toolbox.
 Inspired by [munger.pl](https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl)
 
+It uses CMTK functions:
+    - 'registrationx', 'warpx', 'reformatx', 'average_images', 'avg_adm' and 'streamxform'.
+to:
+    - register, transform images or coordinates, and generate average images (using average dedormation model).
+
+Also, it has functions to perform deformation-based morphometry (implemented as described in [Cachero et al](https://www.sciencedirect.com/science/article/pii/S0960982210009474?via%3Dihub)).
+
+# Usage
+
+-
+
 # Organization of data
+
+- Input (floating) images: images in [NRRD](http://teem.sourceforge.net/nrrd/format.html)) format.
 - do not use letters for naming files.
 - if using more than one channel:
     - make a folder 'images' for the reference channel (use to generate trasnformations).

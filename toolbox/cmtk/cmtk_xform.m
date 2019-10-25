@@ -59,8 +59,13 @@ if ~exist('iparams', 'var'); iparams = []; end
 ibpars = loparam_updater(ibpars, iparams);
 
 % remove format suffix
-if contains(refi, '.nrrd'); refi = strrep(refi, '.nrrd', ''); end
-if contains(refo, '.nrrd'); refo = strrep(refo, '.nrrd', ''); end
+if contains(refi, '.nrrd')
+    refi = strrep(refi, '.nrrd', '');
+end
+
+if contains(refo, '.nrrd')
+    refo = strrep(refo, '.nrrd', '');
+end
 
 % extract xyz from object
 xyz = getObj_xyz(iObject);
