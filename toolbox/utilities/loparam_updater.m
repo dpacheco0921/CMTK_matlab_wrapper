@@ -1,9 +1,11 @@
-function input_struct = loparam_updater(input_struct, input_var, sel_field)
+function input_struct = loparam_updater(...
+    input_struct, input_var, sel_field)
 % loparam_updater: function that updates fields of input structure, or
 %   sub-fields of selected field from the same structure
 % 
 % Usage:
-%   input_struct = loparam_updater(input_struct, input_var, sel_field)
+%   input_struct = loparam_updater(...
+%       input_struct, input_var, sel_field)
 %
 % Args:
 %   input_struct: input structure
@@ -22,7 +24,8 @@ if exist('input_var', 'var') && ~isempty(input_var)
 
         for ii = 1:length(allfields)
             if isfield(input_var, allfields{ii})
-                input_struct.(sel_field).(allfields{ii}) = input_var(1).(allfields{ii}); 
+                input_struct.(sel_field).(allfields{ii}) = ...
+                    input_var(1).(allfields{ii}); 
             end
         end
     else
@@ -31,7 +34,8 @@ if exist('input_var', 'var') && ~isempty(input_var)
         
         for ii = 1:length(allfields)
             if isfield(input_var, allfields{ii})
-                input_struct.(allfields{ii}) = input_var(1).(allfields{ii}); 
+                input_struct.(allfields{ii}) = ...
+                    input_var(1).(allfields{ii}); 
             end
         end        
     end   

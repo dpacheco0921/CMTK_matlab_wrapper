@@ -33,7 +33,9 @@ function cmtk_avgtool(iIm, iDir, oName, oDir, ...
 % '--normalize-mean-stdev' or '-n'
 
 % deafult params
-if ~exist('iIm', 'var'); iIm = []; end
+if ~exist('iIm', 'var')
+    iIm = [];
+end
 
 if ~exist('iDir', 'var') || isempty(iDir)
     iDir = '.';
