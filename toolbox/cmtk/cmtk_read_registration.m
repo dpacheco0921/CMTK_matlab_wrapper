@@ -35,18 +35,24 @@ function params = cmtk_read_registration(txtfname)
 % read text file
 [~, b, c, d] = textread(txtfname, '%s %s %s %s');
 
-if numel(b) == 8 % this is an initial affine
+if numel(b) == 8
+    
+    % this is an initial affine
     params.xlate = [str2double(b{3}), str2double(c{3}), str2double(d{3})];
     params.rotate = [str2double(b{4}), str2double(c{4}), str2double(d{4})];
     params.scale = [str2double(b{5}), str2double(c{5}), str2double(d{5})];
     params.shear = [str2double(b{6}), str2double(c{6}), str2double(d{6})];
     params.center = [str2double(b{7}), str2double(c{7}), str2double(d{7})];
-else % this is a regular affine
+    
+else
+    
+    % this is a regular affine
     params.xlate = [str2double(b{6}), str2double(c{6}), str2double(d{6})];
     params.rotate = [str2double(b{7}), str2double(c{7}), str2double(d{7})];
     params.scale = [str2double(b{8}), str2double(c{8}), str2double(d{8})];
     params.shear = [str2double(b{9}), str2double(c{9}), str2double(d{9})];
     params.center = [str2double(b{10}), str2double(c{10}), str2double(d{10})];
+    
 end
 
 end

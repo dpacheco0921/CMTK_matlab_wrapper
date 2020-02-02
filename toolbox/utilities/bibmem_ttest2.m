@@ -23,7 +23,8 @@ function t_val = bibmem_ttest2(Y, gIdx_1, gIdx_2, ...
 sizY = Y.sizY;
 t_val = zeros(sizY(1), 1);
 
-[~, ~, chunk_idx] = ppool_makechunks(chunk_size, corenum, sizY(1));
+[~, ~, chunk_idx] = ...
+    ppool_makechunks(chunk_size, corenum, sizY(1));
 
 for i = 1:numel(chunk_idx)
     

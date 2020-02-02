@@ -56,6 +56,7 @@ function cmtk_dbm_parse_j_and_tval_and_tnull(inputfiles, iparams)
 % see bibmem_ttest2 get_files2load_pergroup gen_group_shuffle 
 % see also cmtk_dbm_parse_j_and_tval
 
+% default params
 dbm = [];
 dbm.iDir = pwd;
 dbm.oDir = pwd;
@@ -81,7 +82,8 @@ dbm = loparam_updater(dbm, iparams);
 ppobj = setup_parpool(dbm.serId, dbm.corenum);
 
 % 2) load/create mem map object
-dataObj = matfile([dbm.oDir, filesep, dbm.ofname, '.mat'], 'Writable', true);
+dataObj = matfile([dbm.oDir, filesep, dbm.ofname, '.mat'], ...
+    'Writable', true);
 
 % 3) Get files and directories parsed per groups
 [f2r_dir, f2r_im, dbm.gidx] = ...
@@ -97,10 +99,12 @@ end
 % 4) Load jacobian images per file and save them in dataObj
 
 % load brain mask:
-if ~isempty(dbm.imask) && ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
+if ~isempty(dbm.imask) && ...
+        ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
     
     % use selected pixels
-    bmask_int = load([dbm.imaskDir, filesep, strrep(dbm.imaskIm, '.nrrd', '.mat')], dbm.imask);
+    bmask_int = load([dbm.imaskDir, filesep, ...
+        strrep(dbm.imaskIm, '.nrrd', '.mat')], dbm.imask);
     bmask_int = bmask_int.(dbm.imask);
     
 else
@@ -139,7 +143,8 @@ else
 end
 
 % 5) Calculate two-samplet-test
-if ~isprop(dataObj, 't_val') || isempty(dataObj.t_val) || dbm.redo
+if ~isprop(dataObj, 't_val') || ...
+        isempty(dataObj.t_val) || dbm.redo
     
     fprintf('Computing ttest\n')
     
@@ -163,7 +168,8 @@ pix2use = find(bmask_int == 1);
 all_idx = 1:numel(f2r_im);
 k = 1;
 
-if ~isprop(dataObj, 'p_t_val') || isempty(dataObj.p_t_val) || dbm.redo
+if ~isprop(dataObj, 'p_t_val') || ...
+        isempty(dataObj.p_t_val) || dbm.redo
     
     dataObj.p_t_val = [];
     dataObj.p_t_val_b = [];

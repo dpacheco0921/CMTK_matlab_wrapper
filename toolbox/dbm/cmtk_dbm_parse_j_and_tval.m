@@ -52,6 +52,7 @@ function cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
 % inspired by Cachero et al 2010 (https://www.ncbi.nlm.nih.gov/pubmed/20832311)
 % see bibmem_ttest2 cmtk_dbm
 
+% default params
 dbm = [];
 dbm.iDir = pwd;
 dbm.oDir = pwd;
@@ -93,10 +94,12 @@ end
 % 4) Load jacobian images per file and save them in dataObj
 
 % load brain mask:
-if ~isempty(dbm.imask) && ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
+if ~isempty(dbm.imask) && ...
+        ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
     
     % use selected pixels
-    bmask_int = load([dbm.imaskDir, filesep, strrep(dbm.imaskIm, '.nrrd', '.mat')], dbm.imask);
+    bmask_int = load([dbm.imaskDir, filesep, ...
+        strrep(dbm.imaskIm, '.nrrd', '.mat')], dbm.imask);
     bmask_int = bmask_int.(dbm.imask);
     
 else
@@ -135,7 +138,8 @@ else
 end
 
 % 5) Calculate two-samplet-test
-if ~isprop(dataObj, 't_val') || isempty(dataObj.t_val) || dbm.redo
+if ~isprop(dataObj, 't_val') || ...
+        isempty(dataObj.t_val) || dbm.redo
     
     fprintf('Computing ttest\n')
     
@@ -156,7 +160,8 @@ end
 fprintf('Computing shuffle data\n')
 all_idx = 1:numel(f2r_im);
 
-if ~isprop(dataObj, 'p_t_val') || isempty(dataObj.p_t_val) || dbm.redo
+if ~isprop(dataObj, 'p_t_val') || ...
+        isempty(dataObj.p_t_val) || dbm.redo
     
     dataObj.p_t_val = [];
     dataObj.p_t_val_b = [];

@@ -29,4 +29,9 @@ else
     
 end
 
+if isempty(iFile)
+    iDir = [];
+    oFile = [];
+end
+
 end
