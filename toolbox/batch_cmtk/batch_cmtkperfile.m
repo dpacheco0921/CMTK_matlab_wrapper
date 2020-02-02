@@ -175,7 +175,7 @@ iparams = cmtk_paramgen;
 
 % update registration parameters
 if ~isempty(regparams)
-    eval(regparams)
+    eval(['run ' regparams])
 end
 
 % modify registration parameters on the go
@@ -255,7 +255,6 @@ if ~isempty(fIm2sel)
         num2str(fIm2sel), '\n'])
     floatIm = floatIm(fIm2sel);
     floatFol = floatFol(fIm2sel);
-    fIm2sel = numel(floatIm);
     
 end
 
@@ -294,7 +293,6 @@ if ~isempty(rIm2sel)
         num2str(rIm2sel), '\n'])
     refIm = refIm(rIm2sel);
     refFol = refFol(rIm2sel);
-    rIm2sel = numel(refIm);
     
 end
 
@@ -365,7 +363,7 @@ switch serverid
            
     case {'spock', 'della'}
         
-        eval('username = username.', serverid, ';');
+        eval(['username = username.', serverid, ';']);
         
         % run on cluster
         % write a slurm file
