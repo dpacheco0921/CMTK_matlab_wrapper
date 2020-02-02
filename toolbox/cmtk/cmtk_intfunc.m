@@ -1,7 +1,7 @@
 function out = cmtk_intfunc(func2use, redo, iIm, oIm, ...
     refIm, xform, oDir, refDir, iDir, aDir, xDir, iparams)
 % cmtk_intfunc: function executes registration, warp and reformat function
-% from CMTK.
+%   from CMTK.
 %
 % Usage:
 %   out = cmtk_intfunc(func2use, redo, iIm, oIm, ...
@@ -113,41 +113,51 @@ affine_arg = [' -v ', intregpar.aM];
 
 if ~intregpar.initf2use
     if intregpar.regf2use
-        affine_arg = [affine_arg, ' ', intregpar.inittype_reg]; 
+        affine_arg = [affine_arg, ...
+            ' ', intregpar.inittype_reg]; 
     else
-        affine_arg = [affine_arg, ' --initxlate'];
+        affine_arg = [affine_arg, ...
+            ' --initxlate'];
     end 
 end
 
 if intregpar.aSym && intregpar.regf2use
-    affine_arg = [affine_arg, ' --symmetric '];
+    affine_arg = [affine_arg, ...
+        ' --symmetric '];
 end
 
 if intregpar.padref
-    affine_arg = [affine_arg, ' --pad-ref ', num2str(intregpar.padval(1))];
+    affine_arg = [affine_arg, ...
+        ' --pad-ref ', num2str(intregpar.padval(1))];
 end
 
 if intregpar.padfloat
-    affine_arg = [affine_arg, ' --pad-flt ', num2str(intregpar.padval(2))];
+    affine_arg = [affine_arg, ...
+        ' --pad-flt ', num2str(intregpar.padval(2))];
 end
 
 if intregpar.amatchHist
-    affine_arg = [affine_arg, ' --match-histograms'];
+    affine_arg = [affine_arg, ...
+        ' --match-histograms'];
 end
 
 if intregpar.regf2use
-    affine_arg = [affine_arg, ' --max-stepsize ', num2str(intregpar.aX)];
+    affine_arg = [affine_arg, ...
+        ' --max-stepsize ', num2str(intregpar.aX)];
 else
-    affine_arg = [affine_arg, ' -e ', num2str(intregpar.aX)];
+    affine_arg = [affine_arg, ...
+        ' -e ', num2str(intregpar.aX)];
 end
 
 affine_arg = [affine_arg, ' --coarsest ', num2str(intregpar.aC)];
 affine_arg = [affine_arg, ' ', intregpar.affineDOF];
 
 if intregpar.regf2use && ~isempty(intregpar.aAccu)
-    affine_arg = [affine_arg, ' --min-stepsize ', num2str(intregpar.aAccu)];
+    affine_arg = [affine_arg, ' --min-stepsize ', ...
+        num2str(intregpar.aAccu)];
 elseif ~intregpar.regf2use && ~isempty(intregpar.aAccu)
-    affine_arg = [affine_arg, ' -a ', num2str(intregpar.aAccu)];
+    affine_arg = [affine_arg, ' -a ', ...
+        num2str(intregpar.aAccu)];
 end
 
 % alternative initialization
@@ -177,7 +187,8 @@ switch func2use
             % generate default output name:
             % ref-file_float-file_pa.list/registration
             oIm = [strrep(refIm, dirpar.fisuffix, ''), '_', ...
-                strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
+                strrep(iIm, dirpar.fisuffix, ''), '_', ...
+                a_suffix_gen(intregpar)];
         end
 
         % run command
@@ -190,11 +201,14 @@ switch func2use
         command2run = [command2run, affine_arg];
         
         if intregpar.initf2use
-            command2run = [command2run, ' --initial ', dirpar.oDir, filesep, oIm_ia];
+            command2run = [command2run, ...
+                ' --initial ', dirpar.oDir, filesep, oIm_ia];
         end
         
-        command2run = [command2run, ' -o ', dirpar.oDir, filesep, oIm, ' ', ...
-            dirpar.refDir, filesep, refIm,' ', dirpar.iDir, filesep, iIm];
+        command2run = [command2run, ' -o ', ...
+            dirpar.oDir, filesep, oIm, ' ', ...
+            dirpar.refDir, filesep, refIm,' ', ...
+            dirpar.iDir, filesep, iIm];
 
         display(['Running affine with command: ', command2run])
         commandexecuter(command2run, [dirpar.oDir, filesep, oIm], ...
@@ -493,9 +507,11 @@ if isempty(xDir)
     
     switch intregpar.rLevel
         case {'ia', 'a'}
-            dirpar.xDir = ['.', filesep, 'registration', filesep, 'affine'];
+            dirpar.xDir = ...
+                ['.', filesep, 'registration', filesep, 'affine'];
         case 'w'
-            dirpar.xDir = ['.', filesep, 'registration', filesep, 'warp'];
+            dirpar.xDir = ...
+                ['.', filesep, 'registration', filesep, 'warp'];
     end
     
 else
@@ -527,7 +543,8 @@ function commandexecuter(command2run, oIm, redo, verbose)
 
 status = 0;
 
-if ~(exist(oIm, 'file') || exist(strrep(oIm, 'j0', ''), 'file')) || redo
+if ~(exist(oIm, 'file') || ...
+        exist(strrep(oIm, 'j0', ''), 'file')) || redo
     
     if verbose
         status = coexecuter(command2run, 3);
@@ -559,18 +576,25 @@ function affine_suffix = a_suffix_gen(intregpar, suffixgate)
 %   intregpar: main registration parameters
 %   suffixgate: (if 0, excludes .list)
 
-if ~exist('suffixgate', 'var') || isempty(suffixgate); suffixgate = 1; end
+if ~exist('suffixgate', 'var') || ...
+        isempty(suffixgate)
+    suffixgate = 1;
+end
 
-affine_suffix = ['m', intregpar.aM, 'e', num2str(intregpar.aX), 'dof', ...
-    strrep(strrep(intregpar.affineDOF, '--dofs', ''), ' ', ''), ...
+affine_suffix = ['m', intregpar.aM, ...
+    'e', num2str(intregpar.aX), 'dof', ...
+    strrep(strrep(intregpar.affineDOF, ...
+    '--dofs', ''), ' ', ''), ...
     'c', num2str(intregpar.aC)];
 
 if ~intregpar.initf2use
     
     if intregpar.regf2use
-        affine_suffix = [affine_suffix, 'i', strrep(intregpar.inittype_reg, '--', '')];
+        affine_suffix = [affine_suffix, 'i', ...
+            strrep(intregpar.inittype_reg, '--', '')];
         % consider adding another label: 
-        % affine_suffix = [affine_suffix, 'ix', strrep(intregpar.inittype_reg, '--', '')];
+        % affine_suffix = [affine_suffix, 'ix', ...
+        %   strrep(intregpar.inittype_reg, '--', '')];
     else
         affine_suffix = [affine_suffix, 'initfov'];
     end
@@ -609,7 +633,8 @@ end
 
 end
 
-function warp_suffix = w_suffix_gen(intregpar, suffixgate)
+function warp_suffix = ...
+    w_suffix_gen(intregpar, suffixgate)
 % w_suffix_gen: generates default warp suffix (if 0, excludes .list)
 %
 % Usage:
@@ -619,15 +644,21 @@ function warp_suffix = w_suffix_gen(intregpar, suffixgate)
 %   intregpar: main registration parameters
 %   suffixgate: (if 0, excludes .list)
 
-if ~exist('suffixgate', 'var') || isempty(suffixgate); suffixgate = 1; end
+if ~exist('suffixgate', 'var') || ...
+        isempty(suffixgate)
+    suffixgate = 1;
+end
+
 warp_suffix = 'warp';
 
 if intregpar.warpf2use
     warp_suffix = [warp_suffix, 'x'];
 end
 
-warp_suffix = [warp_suffix, '_m', intregpar.wM, 'g', intregpar.G, 'c',...
-    num2str(intregpar.wC), 'e', intregpar.E, 'x', num2str(intregpar.wX), ...
+warp_suffix = [warp_suffix, '_m', ...
+    intregpar.wM, 'g', intregpar.G, 'c',...
+    num2str(intregpar.wC), 'e', ...
+    intregpar.E, 'x', num2str(intregpar.wX), ...
     'r', intregpar.R];
 
 if ~strcmp(intregpar.J, '0')
@@ -642,8 +673,13 @@ if intregpar.padfloat
     warp_suffix = [warp_suffix, 'pf'];
 end
 
-if intregpar.wmatchHist; warp_suffix = [warp_suffix, '_mh']; end
-if intregpar.rToUnfold; warp_suffix = [warp_suffix, '_r2unf']; end
+if intregpar.wmatchHist
+    warp_suffix = [warp_suffix, '_mh'];
+end
+
+if intregpar.rToUnfold
+    warp_suffix = [warp_suffix, '_r2unf'];
+end
 
 if suffixgate
     warp_suffix = [warp_suffix, '.list'];
@@ -651,8 +687,10 @@ end
 
 end
 
-function command2run = add_xform(command2run, xform, xDir)
-% add_xform: basically adds many xforms for reformatting (if xform is a cell or not)
+function command2run = ...
+    add_xform(command2run, xform, xDir)
+% add_xform: basically adds many xforms 
+%   for reformatting (if xform is a cell or not)
 %
 % Usage:
 %   command2run = add_xform(command2run, xform)
@@ -666,19 +704,23 @@ if iscell(xform)
     
     for i = 1:numel(xform)
         if iscell(xDir)
-            command2run = [command2run, ' ', xDir{i}, filesep, xform{i}];
+            command2run = ...
+                [command2run, ' ', xDir{i}, filesep, xform{i}];
         else
-            command2run = [command2run, ' ', xDir, filesep, xform{i}];
+            command2run = ...
+                [command2run, ' ', xDir, filesep, xform{i}];
         end
     end
     
 else
-    command2run = [command2run, ' ', xDir, filesep, xform];
+    command2run = ...
+        [command2run, ' ', xDir, filesep, xform];
 end
 
 end
 
-function igate = exist_xform(xform, reformat_level, xDir)
+function igate = ...
+    exist_xform(xform, reformat_level, xDir)
 % exist_xform: basically checks if xform files exist
 %
 % Usage:
@@ -692,28 +734,52 @@ function igate = exist_xform(xform, reformat_level, xDir)
 if iscell(xform)
     
     for i = 1:numel(xform)
+        
         if iscell(xDir)
-            igate(i) = exist(fullfile(xDir{i}, filesep, xform{i}, filesep, 'registration'), 'file') == 2 || ...
-            exist(fullfile(xDir{i}, filesep, xform{i}, filesep, 'registration.gz'), 'file') == 2 || ...
-            exist(fullfile(xDir{i}, filesep, strrep(xform{i}, 'j0', ''), filesep, 'registration'), 'file') == 2 || ...
-            exist(fullfile(xDir{i}, filesep, strrep(xform{i}, 'j0', ''), filesep, 'registration.gz'), 'file') == 2;
+            
+            file_t1 = [xDir{i}, filesep, ...
+                xform{i}, filesep, 'registration'];
+            file_t2 = [xDir{i}, filesep, ...
+                strrep(xform{i}, 'j0', ''), filesep, 'registration'];
+            
+            igate(i) = exist(fullfile(file_t1, 'file') == 2 || ...
+            exist(fullfile([file_t1 '.gz']), 'file') == 2 || ...
+            exist(fullfile(file_t2), 'file') == 2 || ...
+            exist(fullfile([file_t2 '.gz']), 'file') == 2;
+        
         else
-            igate(i) = exist(fullfile(xDir, filesep, xform{i}, filesep, 'registration'), 'file') == 2 || ...
-            exist(fullfile(xDir, filesep, xform{i}, filesep, 'registration.gz'), 'file') == 2 || ...
-            exist(fullfile(xDir, filesep, strrep(xform{i}, 'j0', ''), filesep, 'registration'), 'file') == 2 || ...
-            exist(fullfile(xDir, filesep, strrep(xform{i}, 'j0', ''), filesep, 'registration.gz'), 'file') == 2;
+            
+            file_t1 = [xDir, filesep, ...
+                xform{i}, filesep, 'registration'];
+            file_t2 = [xDir, filesep, ...
+                strrep(xform{i}, 'j0', ''), filesep, 'registration'];
+            
+            igate(i) = exist(fullfile(file_t1), 'file') == 2 || ...
+            exist(fullfile([file_t1 '.gz']), 'file') == 2 || ...
+            exist(fullfile(file_t2), 'file') == 2 || ...
+            exist(fullfile([file_t2 '.gz']), 'file') == 2;
+        
         end
     end
     
 else
     
     if strcmp(reformat_level, 'ia') % it is already a file, not a dir
+        
         igate = exist(fullfile(xDir, filesep, xform), 'file') == 2;
+        
     else
-        igate = exist(fullfile(xDir, filesep, xform, filesep, 'registration'), 'file') == 2 || ...
-        exist(fullfile(xDir, filesep, xform, filesep, 'registration.gz'), 'file') == 2 || ...
-        exist(fullfile(xDir, filesep, strrep(xform, 'j0', ''), filesep, 'registration'), 'file') == 2 || ...
-        exist(fullfile(xDir, filesep, strrep(xform, 'j0', ''), filesep, 'registration.gz'), 'file') == 2;
+        
+        file_t1 = [xDir, filesep, ...
+            xform, filesep, 'registration'];
+        file_t2 = [xDir, filesep, ...
+            strrep(xform, 'j0', ''), filesep, 'registration'];
+        
+        igate = exist(fullfile(file_t1), 'file') == 2 || ...
+        exist(fullfile([file_t1 '.gz']), 'file') == 2 || ...
+        exist(fullfile(file_t2), 'file') == 2 || ...
+        exist(fullfile([file_t2 '.gz']), 'file') == 2;
+    
     end
     
 end
