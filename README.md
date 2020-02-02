@@ -12,7 +12,13 @@ Also, it has functions to perform deformation-based morphometry (implemented as 
 
 # Usage
 
-- Edit regrelated_directoriestoedit.m file (provide user defined directories)
+- Edit regrelated_directoriestoedit.m file.
+    - provide user defined directories, in particular folder where atlases' images will be.
+- see cmtk_demo.m
+    - download demo data containing:
+        - reference image: nsybIVAidownsample.nrrd
+        - 'images' folder with floating images
+    - use batch_cmtkperfile to run batches of images per folder
 
 # Organization of data
 
@@ -36,6 +42,8 @@ This pipeline requires the following packages:
     - [https://github.com/jefferislab/MirrorRegistrations](https://github.com/jefferislab/MirrorRegistrations)
     - [https://github.com/jefferislab/DrosophilidBridgingRegistrations](https://github.com/jefferislab/DrosophilidBridgingRegistrations)
 - download Fiji
+- if interfacing with a cluster download:
+    - [https://github.com/dpacheco0921/pu_cluster_interface](https://github.com/dpacheco0921/pu_cluster_interface)
 
 # Acknowledgements
 
