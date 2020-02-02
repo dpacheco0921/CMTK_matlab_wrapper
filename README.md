@@ -42,7 +42,7 @@ This pipeline requires the following packages:
     - [https://github.com/jefferislab/MirrorRegistrations](https://github.com/jefferislab/MirrorRegistrations)
     - [https://github.com/jefferislab/DrosophilidBridgingRegistrations](https://github.com/jefferislab/DrosophilidBridgingRegistrations)
 - download Fiji
-- if interfacing with a cluster download:
+- download pu_cluster_interface (it requires the user defined temporary folder to save job parameters)
     - [https://github.com/dpacheco0921/pu_cluster_interface](https://github.com/dpacheco0921/pu_cluster_interface)
 
 # Acknowledgements
