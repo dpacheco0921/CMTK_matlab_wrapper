@@ -1,5 +1,19 @@
 %% CMTK wrapper
 %% 1) Main functions to run registration and reformat
+batch_cmtkperfile
+% run registrations per folder (submit jobs for many files)
+% batch_cmtkperfile(rIm2sel, serId, regsource, fIm2sel, mailme)
+
+cmtk_perfile
+% run registrations (initial affine, rigid or non-rigid) for each file
+% cmtk_perfile(paramfile, serverid, IntID)
+
+cmtk_editparams.m
+cmtk_editsteps.m
+% functions to edit registration parameters
+% cmtk_editparams: change registration parameters
+% cmtk_editsteps: change steps to run
+
 cmtk_intfunc
 % function that handles cmtk tools
 % it executes registration, warp and reformat functions from CMTK
@@ -24,7 +38,8 @@ cmtk_read_registration
 %% 3) Transform images or coordinates
 
 cmtk_xform
-% reformat xyz points (matrix of points or trees) from one reference to another reference coordinates
+% reformat xyz points (matrix of points or trees) 
+%   from one reference to another reference coordinates
 % [iObject, err_] = cmtk_xform(iObject, refi, refo, iparams)
 
 cmtk_xform_im
@@ -56,3 +71,4 @@ cmtk_dbm_parse_j_and_tval
 % Ideas:
 % have exampe 1-5 nrrd files, and nsybIVA template
 % make a demo using registration/
+% check cmtk_reformat

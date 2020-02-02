@@ -12,7 +12,7 @@ Also, it has functions to perform deformation-based morphometry (implemented as 
 
 # Usage
 
--
+- Edit regrelated_directoriestoedit.m file (provide user defined directories)
 
 # Organization of data
 
@@ -29,6 +29,13 @@ Also, it has functions to perform deformation-based morphometry (implemented as 
 This pipeline requires the following packages:
 - the Computational Morphometry Toolkit [CMTK](https://www.nitrc.org/projects/cmtk)
     - download toolbox at [CMTK-Download](https://www.nitrc.org/frs/?group_id=212), for windows install see [CMTK-windows](https://github.com/jefferis/nat/blob/master/vignettes/Installation.Rmd)
+- download registration-related repositories
+    - [https://github.com/VirtualFlyBrain/DrosAdultBRAINdomains](https://github.com/VirtualFlyBrain/DrosAdultBRAINdomains)
+    - [https://github.com/VirtualFlyBrain/DrosAdultHalfBRAINdomains](https://github.com/VirtualFlyBrain/DrosAdultHalfBRAINdomains)
+    - [https://github.com/jefferislab/BridgingRegistrations](https://github.com/jefferislab/BridgingRegistrations)
+    - [https://github.com/jefferislab/MirrorRegistrations](https://github.com/jefferislab/MirrorRegistrations)
+    - [https://github.com/jefferislab/DrosophilidBridgingRegistrations](https://github.com/jefferislab/DrosophilidBridgingRegistrations)
+- download Fiji
 
 # Acknowledgements
 
