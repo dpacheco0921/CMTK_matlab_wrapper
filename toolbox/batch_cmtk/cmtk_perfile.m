@@ -54,7 +54,7 @@ else
     load([tDir, sep, paramfile, '_cmtk.mat'], ...
         'floatIm', 'floatFol', 'refIm', 'refFol', 'p', 'iparamscell')
     % p.Cdir is updated to the one saved in the _impre.mat file
-    taskID = getclus_taskid(p.serId);
+    taskID = getclus_taskid(serverid);
     
 end
 

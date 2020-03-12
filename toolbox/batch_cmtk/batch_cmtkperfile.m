@@ -346,7 +346,7 @@ function submitjob(name, tDir, ...
 %   userdomain: domain to use for username
 %   jobtime: time requested per job
 
-functype = {'cmtk_perfile.m'};
+functype = 'cmtk_perfile';
 
 if isempty(jobtime)
     % controlling jobtime depending on tipe of job sent
@@ -379,7 +379,7 @@ switch serverid
         fprintf(fid, ['#SBATCH --time=', num2str(jobtime), ':00:00\n']);
         fprintf(fid, ['#SBATCH --mem=', num2str(memreq), '000\n']);
         fprintf(fid, '#SBATCH --mail-type=END\n');
-        fprintf(fid, ['#SBATCH --mail-user=', username, userdomain, '\n']);
+        fprintf(fid, ['#SBATCH --mail-user=', ['username.', serverid], userdomain, '\n']);
         fprintf(fid, ['#SBATCH --array=1-', num2str(numT), '\n\n']);
 
         fprintf(fid, 'module load cmtk/3.3.1\n');
@@ -387,7 +387,7 @@ switch serverid
         fprintf(fid, '# Create a local work directory\n');
         fprintf(fid, 'mkdir -p /tmp/$USER-$SLURM_JOB_ID\n');
         fprintf(fid, ['matlab -nodesktop -nodisplay -nosplash -r "', ...
-            functype(1:end-2),'(''', name, ''',''', serverid, ''')"\n']);
+            functype,'(''', name, ''',''', serverid, ''')"\n']);
         fprintf(fid, '# Cleanup local work directory\n');
         fprintf(fid, 'rm -rf /tmp/$USER-$SLURM_JOB_ID\n');
         
