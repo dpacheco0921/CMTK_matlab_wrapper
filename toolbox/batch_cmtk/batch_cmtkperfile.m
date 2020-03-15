@@ -379,7 +379,7 @@ switch serverid
         fprintf(fid, ['#SBATCH --time=', num2str(jobtime), ':00:00\n']);
         fprintf(fid, ['#SBATCH --mem=', num2str(memreq), '000\n']);
         fprintf(fid, '#SBATCH --mail-type=END\n');
-        fprintf(fid, ['#SBATCH --mail-user=', ['username.', serverid], userdomain, '\n']);
+        fprintf(fid, ['#SBATCH --mail-user=', username, userdomain, '\n']);
         fprintf(fid, ['#SBATCH --array=1-', num2str(numT), '\n\n']);
 
         fprintf(fid, 'module load cmtk/3.3.1\n');
