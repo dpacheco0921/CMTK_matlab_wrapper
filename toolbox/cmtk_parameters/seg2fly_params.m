@@ -51,6 +51,7 @@ p.ref2refreg = 0;
 p.refImSu = '_w_'; % suffix for reference image
 p.floatImSu = '_s_'; % suffix for floating image
 p.floatiDir = '.'; % default floating image directory
+p.refiDir = '.'; % default reference image directory
 p.agate = 1;
 p.redo = 0;
 p.wgate = 1;
