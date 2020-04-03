@@ -16,8 +16,15 @@ global p
 % which reference image to use
 p.ref2refreg = 1;
 p.refImSu = 'nsybIVAi.nrrd';
+p.floatiDir = ['.', filesep, 'images'];
+p.refiDir = ['.', filesep];
 p.redo = 0;
+p.agate = 1;
 p.wgate = 1;
+p.ragate = 0; % refine affine
+p.jgate = 0;
+p.rgate_ch2 = 0;
+
 % affine parameters
 iparams.regf2use = 1; 
 iparams.aX = 13;
@@ -25,12 +32,14 @@ iparams.aM = '--nmi'; % given that the data has the same labeling you could try 
 iparams.aAccu = 0.4;
 iparams.aC = 9;
 iparams.affineDOF = '--dofs 3 --dofs 6 --dofs 9 --dofs 12';
+iparams.initf2use = 0;
 iparams.inittype_mia = '--centers-of-mass';
 iparams.inittype_reg = '--com';
 iparams.amatchHist = 1;
 iparams.aSym = 0;
 iparams.padfloat = 0;
 iparams.padref = 0;
+
 % warp params
 iparams.wX = 13;
 iparams.wM = '--nmi';
@@ -38,7 +47,7 @@ iparams.wAccu = 0.4;
 iparams.wC = 9;
 iparams.J = '0';
 iparams.I = '0';
-iparams.E = '1e-1'; % try reducing it so it accounts for extra warping
+iparams.E = '1e-1';
 iparams.R = '5';
 iparams.wSpeed = 0;
 iparams.wmatchHist = 0;

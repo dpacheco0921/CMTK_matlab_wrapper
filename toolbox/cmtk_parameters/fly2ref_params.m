@@ -19,6 +19,7 @@ p.rgate_ch2 = 0;
 % extra parameters for refine affine (masking some pixels out)
 p.iFloat = 'nsybIVAi_cbrain_dil';
 [p.iFloat_dir, ~, ~] = regrelated_directories;
+
 % affine parameters
 % when using nmi or msd metric for affine, nmi at non-linear reaches the
 % same solution (or almost the same)
@@ -35,6 +36,7 @@ iparams.amatchHist = 1;
 iparams.aSym = 0;
 iparams.padfloat = 0;
 iparams.padref = 0;
+
 % warp params
 iparams.wX = 13;
 iparams.wM = '--nmi';
