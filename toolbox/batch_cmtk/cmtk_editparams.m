@@ -68,15 +68,18 @@ elseif reg_edit == 19
 
     % ********* refgen related *********
 elseif reg_edit == 20
-    p.refImSu = 'nsybIVAn_2'; 
+    p.refImSu = 'nsybIVAn_1'; 
 elseif reg_edit == 21
-    p.refImSu = 'nsybIVAn_2';
-    registration_params.aM = '--msd';
+    p.refImSu = 'nsybIVAn_1';
+    registration_params.G = '160';
 elseif reg_edit == 22
-    p.refImSu = 'nsybIVAn_5';
+    p.refImSu = 'nsybIVAn_1';
+    registration_params.G = '160';
+    registration_params.J = '1e-1';
 elseif reg_edit == 23
-    p.refImSu = 'nsybIVAn_2';
-    registration_params.aM = '--msd';
+    p.refImSu = 'nsybIVAn_1';
+    registration_params.G = '160';
+    registration_params.J = '1e-2';
 elseif reg_edit == 24
     p.refImSu = 'JFRC2_cbrain_m.';
 elseif reg_edit == 25
