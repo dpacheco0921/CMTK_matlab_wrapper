@@ -383,7 +383,7 @@ switch serverid
         fprintf(fid, ['#SBATCH --array=1-', num2str(numT), '\n\n']);
 
         fprintf(fid, 'module load cmtk/3.3.1\n');
-        fprintf(fid, 'module load matlab/R2018b\n');
+        fprintf(fid, 'module load matlab/R2019b\n');
         fprintf(fid, '# Create a local work directory\n');
         fprintf(fid, 'mkdir -p /tmp/$USER-$SLURM_JOB_ID\n');
         fprintf(fid, ['matlab -nodesktop -nodisplay -nosplash -r "', ...
