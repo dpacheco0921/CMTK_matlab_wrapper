@@ -12,7 +12,7 @@ function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
 %       (deafult, 'spock')
 %   regparams: string defining script to generate 
 %       registration parameters
-%       **deprecated, this varaible used to go from 0-7**
+%       **deprecated, this variable used to go from 0-7**
 %       (deafult, [], default registration parameters *0*)
 %       (refgen_params, specific for ref generation *1*)
 %       (seg2fly_params, specific for segment to whole fly registration *3*)
