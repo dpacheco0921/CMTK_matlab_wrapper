@@ -34,24 +34,21 @@ function cmtk_perfile(paramfile, serverid, IntID)
 timeint = tic;
 fprintf('\nRunning registration of volumes using CMTK\n');
 
-% Default parameters
-global sep
-
-osDir = pwd; % jobfile directory
-sep = filesep;
+% jobfile directory
+osDir = pwd;
 
 if exist('IntID', 'var')
     
     taskID = IntID;
-    load(['.', sep, paramfile, '_cmtk.mat'], ...
+    load(['.', filesep, paramfile, '_cmtk.mat'], ...
         'floatIm', 'floatFol', 'refIm', 'refFol', 'p', 'iparamscell')
     
 else
     
     [~, ~, ~, tempfiledir, ~] = ...
         user_defined_directories(serverid);
-    tDir = [tempfiledir, sep, 'jobsub', sep, 'regrel'];
-    load([tDir, sep, paramfile, '_cmtk.mat'], ...
+    tDir = [tempfiledir, filesep, 'jobsub', filesep, 'regrel'];
+    load([tDir, filesep, paramfile, '_cmtk.mat'], ...
         'floatIm', 'floatFol', 'refIm', 'refFol', 'p', 'iparamscell')
     % p.Cdir is updated to the one saved in the _impre.mat file
     taskID = getclus_taskid(serverid);

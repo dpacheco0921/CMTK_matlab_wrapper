@@ -387,7 +387,7 @@ switch serverid
         fprintf(fid, '# Create a local work directory\n');
         fprintf(fid, 'mkdir -p /tmp/$USER-$SLURM_JOB_ID\n');
         fprintf(fid, ['matlab -nodesktop -nodisplay -nosplash -r "', ...
-            functype,'(''', name, ''',''', serverid, ''')"\n']);
+            functype, '(''', name, ''',''', serverid, ''')"\n']);
         fprintf(fid, '# Cleanup local work directory\n');
         fprintf(fid, 'rm -rf /tmp/$USER-$SLURM_JOB_ID\n');
         
