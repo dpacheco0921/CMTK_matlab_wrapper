@@ -43,7 +43,7 @@ for i = 1:numel(cmtk_out_filename)
        preTime = strsplit2(preTime, '.');
        rTime(i, 1) = str2double(preTime{1});
     else
-       rTime(i, 1) = 0;
+       rTime(i, 1) = nan;
     end
     
     % get Idx
