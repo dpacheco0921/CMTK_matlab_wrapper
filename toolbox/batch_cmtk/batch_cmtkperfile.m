@@ -164,6 +164,17 @@ end
 % get scratch (temporary) and bucket (permanent) directories
 [~, username, ~, temporary_dir, ~, userdomain] = ...
     user_defined_directories(serverid);
+
+if ~exist(temporary_dir, 'dir')
+    
+    repo_temp_folder = strrep(which('server_interface'), ...
+        'server_interface.m', '');
+    disp([temporary_dir, ' directory does not exist using pu_cluster_interface repo folder ', ...
+        repo_temp_folder, ' instead'])
+    temporary_dir = repo_temp_folder;
+    
+end
+    
 if ~exist([temporary_dir, 'jobsub', filesep, 'regrel'], 'dir')
     mkdir([temporary_dir, 'jobsub', filesep, 'regrel']);
 end
