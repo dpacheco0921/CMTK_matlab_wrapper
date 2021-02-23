@@ -1,10 +1,10 @@
 function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
-    fIm2sel, memreq, jobtime, regparams_edits)
+    fIm2sel, memreq, jobtime, regparams_edits, corenum)
 % batch_cmtkperfile: Running registration Using MatLab
 %
 % Usage:
 %   batch_cmtkperfile(rIm2sel, serverid, regparams, ...
-%       fIm2sel, memreq, jobtime, regparams_edits)
+%       fIm2sel, memreq, jobtime, regparams_edits, corenum)
 %
 % Args:
 %   rIm2sel: index of reference image to use
@@ -45,12 +45,14 @@ function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
 %           ('rch_4', register channel 4)
 %           ('redo', redo)
 %           ('ar', do affine variant)
+%   corenum: number of cores to request
+%   	(default: 4)
 % internal variable with important parameters
 %   p (controls which files to load, details of server usage, etc)
 %         %%%%%% directory related %%%%%%
 %        (cDir: current directory)
 %           (deafult, 'pwd')
-%        (redo: redo)
+%        (redo: redo flag)
 %           (deafult, 0)
 %        (floatiDir: default floating image directory)
 %           (deafult, ['.', filesep, 'images'])
@@ -153,12 +155,19 @@ if ~exist('regparams_edits', 'var') || ...
 end
 
 if ispc || ismac
+    
     % running locally
     ppobj = parcluster('local');
     corenum = ppobj.NumWorkers;
     clear ppobj
+    
 else
-    corenum = 4;
+    
+    if ~exist('corenum', 'var') || ...
+        isempty(corenum)
+        corenum = 4;
+    end
+    
 end
 
 % get scratch (temporary) and bucket (permanent) directories

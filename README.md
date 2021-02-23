@@ -53,4 +53,4 @@ Special thanks to:
 # Citation
 
 If you use this code please cite the following corresponding paper:
-[Diego Pacheco, Stephan Thiberge, Eftychios Pnevmatikakis, Mala Murthy (2019). Auditory Activity is Diverse and Widespread Throughout the Central Brain of Drosophila](https://doi.org/10.1101/709519)
+[Diego Pacheco, Stephan Thiberge, Eftychios Pnevmatikakis, Mala Murthy (2019). Auditory Activity is Diverse and Widespread Throughout the Central Brain of Drosophila](https://www.nature.com/articles/s41593-020-00743-y)
