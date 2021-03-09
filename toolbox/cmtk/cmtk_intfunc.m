@@ -471,7 +471,7 @@ if isempty(oDir)
             dirpar.oDir = ['.', filesep, 'registration', filesep, 'affine'];
         case 'w'
             dirpar.oDir = ['.', filesep, 'registration', filesep, 'warp'];
-        case 'r'
+        case {'r', 'rj'}
             if isfield(intregpar, 'rgate_ch2') && intregpar.rgate_ch2
                 dirpar.oDir = ['.', filesep, 'reformatted_', ...
                     strrep(iDir, ['.', filesep, 'images_'], '')];
