@@ -26,7 +26,7 @@ function cmtk_avg_adm(inputfiles, oref_name, oImDir, ...
 % 	(subdirectory with transformations: registration)
 %		(this in turn should have both 'affine' and 'warp' subdirectories)
 %       (by default cmtk functions generate these subdirectories)
-% inspired by https://github.com/jefferislab/MakeAverageBrain
+% inspired by https://github.com/jefferislab/MakeAverageBrain/commands/avgcmdIterationPadOut.sh
 % by default average intensity image is saved in the subdirectory 'average_im'
 % by default average deformation is saved in the subdirectory 'average_xform'
 
@@ -87,7 +87,7 @@ end
 
 % build arguments
 avg_arg = ['avg_adm --verbose --cubic ', numericType, ...
-    '--auto-scale --no-ref-data  --set-padding 0 --pad-out 0'];
+    '--auto-scale --no-ref-data --pad-out 0']; % --set-padding 0
 
 % add output directory for average xform
 command2run = [avg_arg, ' --output-warp ',  oDir, filesep, ...
