@@ -66,7 +66,8 @@ if ~isempty(reg_edit)
     
     % reformat extra channels
     if contains(reg_edit, '~rch2') || ...
-            contains(reg_edit, '~rch3')
+            contains(reg_edit, '~rch3') || ...
+            contains(reg_edit, '~rch4')
         
         % just channel 1
         p.rgate_ch2 = 0;
@@ -76,6 +77,8 @@ if ~isempty(reg_edit)
         
         % do channel 2
         p.rgate_ch2 = 1;
+        p.floatiDir_2 = ['.', filesep, 'images_ch2'];
+        p.ch2chSu = {'_01.nrrd', '_02.nrrd'};
         
     elseif ~contains(reg_edit, '~rch3') && ...
             contains(reg_edit, 'rch3')
