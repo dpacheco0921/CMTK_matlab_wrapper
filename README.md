@@ -22,7 +22,7 @@ Also, it has functions to perform deformation-based morphometry (implemented as 
 
 # Organization of data
 
-- Input (floating) images: images in [NRRD](http://teem.sourceforge.net/nrrd/format.html)) format.
+- Input (floating) images: images in [NRRD](http://teem.sourceforge.net/nrrd/format.html) format.
 - do not use letters for naming files.
 - if using more than one channel:
     - make a folder 'images' for the reference channel (use to generate trasnformations).
@@ -41,7 +41,8 @@ This pipeline requires the following packages:
     - [https://github.com/jefferislab/BridgingRegistrations](https://github.com/jefferislab/BridgingRegistrations)
     - [https://github.com/jefferislab/MirrorRegistrations](https://github.com/jefferislab/MirrorRegistrations)
     - [https://github.com/jefferislab/DrosophilidBridgingRegistrations](https://github.com/jefferislab/DrosophilidBridgingRegistrations)
-- download Fiji
+- download StackViewer to visualize results (MatLab wrapper of FIJI functions)
+    - [https://github.com/dpacheco0921/StackViewer](https://github.com/dpacheco0921/StackViewer)
 - download pu_cluster_interface (it requires the user defined temporary folder to save job parameters)
     - [https://github.com/dpacheco0921/pu_cluster_interface](https://github.com/dpacheco0921/pu_cluster_interface)
 
