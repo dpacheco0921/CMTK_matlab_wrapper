@@ -1,7 +1,6 @@
 %% Params used for the generation of reference brain
 % Starting with default refgen params
 
-global p
 % which reference image to use
 p.ref2refreg = 0;
 p.floatiDir = ['.', filesep, 'images'];
