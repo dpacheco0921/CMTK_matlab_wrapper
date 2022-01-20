@@ -27,7 +27,7 @@ function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
 %   regparams_edits: edit certain registration steps
 %       ({1} = edits finer registration parameters, while {2} edits
 %       registration steps)
-%   regparams_edits{1}: string that defines steps of registration
+%   regparams_edits{1}: number (or vector) that defines steps of registration
 %       to run (see cmtk_editparams)
 %   regparams_edits{2}: string that defines steps of registration
 %       to run (see cmtk_editsteps)
