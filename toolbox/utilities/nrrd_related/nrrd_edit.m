@@ -27,7 +27,7 @@ function nrrd_edit(FolderName, FileName, iparams)
 %       (save_mirror: save also mirror image on selected axis)
 %           (default, [0 0 0], 'height witdh depth')
 %       (save_mirror_str: string to replace for naming mirror image)
-%           (default, {'w', 'mw'}, 'height witdh depth')
+%           (default, {'w', 'mw'}, 'height width depth')
 
 if ~exist('FileName','var')
     FileName = [];

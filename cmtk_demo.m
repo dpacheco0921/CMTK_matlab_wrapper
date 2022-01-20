@@ -50,13 +50,13 @@ batch_cmtkperfile(refenceImages2use, serverid, ...
     reg_params_in, floatingImages2use, ...
     [], [], regparams_edits)
 
-%% when using a cluster/server
+%% When using a cluster/server
 % find jobs that finished:
 slurmfile = '18663522*';
 [fileIdx, status, slurmfile_name] = cmtk_read_slurm_out(slurmfile);
 
 % find out what was the running time for each *slurm file
 slurmfile = '18663522*';
-[sun_time, slurmfile_name] = cmtk_getruntime(slurmfile);
+[run_time, slurmfile_name] = cmtk_getruntime(slurmfile);
 fprintf('Time elapsed\n')
-sun_time
+run_time

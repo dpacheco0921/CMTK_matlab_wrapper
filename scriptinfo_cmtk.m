@@ -64,11 +64,3 @@ cmtk_dbm_parse_j_and_tval_and_tnull
 cmtk_dbm_parse_j_and_tval
 % Same as before without the null distribution of t-stat
 % cmtk_dbm_raw_cmp_tval(inputfiles, iparams)
-
-%% 6) ToDo
-
-% write a demo
-% Ideas:
-% have exampe 1-5 nrrd files, and nsybIVA template
-% make a demo using registration/
-% check cmtk_reformat
