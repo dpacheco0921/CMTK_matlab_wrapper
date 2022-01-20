@@ -12,10 +12,13 @@ function cmtk_write_init_affine(iparams, oDir)
 %       (shear, [0 0 0])
 %       (center, [0 0 0])
 %   oDir: output directory
+%
+% Notes
+% 2021-01-20: upated default scale to [1 1 1].
 
 cparams.xlate = [0 0 0];
 cparams.rotate = [0 0 0];
-cparams.scale = [0 0 0];
+cparams.scale = [1 1 1];
 cparams.shear = [0 0 0];
 cparams.center = [0 0 0];
 

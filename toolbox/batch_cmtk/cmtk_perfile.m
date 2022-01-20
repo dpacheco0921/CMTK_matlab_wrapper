@@ -95,6 +95,16 @@ fprintf('\nStep (2): running cmtk functions\n')
 cmtk_intfunc('ia',  p.redo, floatIm, [], refIm, ...
     [], [], rfDir, iDir, [], [], iparams);
 
+% there is a bug in windows, and initial affine does not always work, the
+% temporary solution is to make a text file with no net transformation
+
+iaDir = ['.', filesep, 'registration', filesep, 'affine'];
+iaFilename = [strrep(refIm, '.nrrd', ''), '_', strrep(floatIm, '.nrrd', ''), '_pa.list'];
+if ~exist([iaDir, filesep, iaFilename], 'dir')
+    cmtk_write_init_affine([], [iaDir, filesep, iaFilename])
+    fprintf('writing null initial affine\n')
+end
+
 % retrieve initial affine reg
 if iparams.initf2use
     iparams.rLevel = 'ia'; 
@@ -105,7 +115,7 @@ end
 % run affine and initial affine (using a option from registration(x) functions)
 if p.agate == 1
     
-    out_aff1 = cmtk_intfunc('a',  p.redo, floatIm, [], refIm, ...
+    out_aff1 = cmtk_intfunc('a', p.redo, floatIm, [], refIm, ...
         [], [], rfDir, iDir, [], [], iparams);
     iparams.rLevel = 'a';
     
