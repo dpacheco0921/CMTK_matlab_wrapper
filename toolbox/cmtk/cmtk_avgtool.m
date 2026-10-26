@@ -26,7 +26,13 @@ function cmtk_avgtool(iIm, iDir, oName, oDir, ...
 % 		('--float': single-precision float, default)
 % 		('--double': double-precision float)
 % 
+% Returns:
+%   (none; writes [oDir, filesep, oName, '.nrrd'])
+%
 % Notes:
+% iIm and eiIm are matched as substrings anywhere in the file path.
+% NOTE (known issue, not yet fixed): if no input file matches, average_images
+%   is still launched with no inputs and the command status is ignored.
 % other preprocessing steps to add:
 % '--log' '-l'
 % '--abs' '-a'
@@ -56,7 +62,7 @@ end
 % extra filter for iIm
 if ~exist('eiIm', 'var') || isempty(eiIm); eiIm = []; end
 
-% find input files
+% find input files (all .nrrd in iDir, then keep names matching iIm / eiIm)
 f2use = rdir([iDir, filesep, '*.nrrd']);
 f2use = {f2use.name};
 f2use = str2match(iIm, f2use);

@@ -1,4 +1,7 @@
-%% Params used for fly to ref registration
+%% Params for fly-to-atlas registration (affine + warp): floats matching '_w_' in the current folder vs reference 'nsybIVAi.nrrd', skipping files containing 'cb'
+% Sets p.* (refiDir, refImSu, floatImSu, float2reject, floatiDir, gates, iFloat, iFloat_dir) and iparams.* (G=170, J=1e-3, E=1); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% p.iFloat / p.iFloat_dir = mask image (central brain, dilated) and its folder, only used by the affine-refine variant (p.ragate ~= 0).
 % notes
 % in general uses same registration parameters as used in refgen.m
 % it adds specifics for folder and file names

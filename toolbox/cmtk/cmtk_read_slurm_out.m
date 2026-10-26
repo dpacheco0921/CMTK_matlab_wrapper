@@ -1,15 +1,32 @@
 function [fileIdx, status, out_filename] = ...
     cmtk_read_slurm_out(strpattern, txt2match)
-% cmtk_read_slurm_out: reads slurm output file 
-%   and finds text matching 'txt2match'
+% cmtk_read_slurm_out: reads slurm output files (*.slurm) and flags the
+%   jobs that did not finish cleanly
 %
 % Usage:
-%	[fileIdx, status, fileName] = ...
+%	[fileIdx, status, out_filename] = ...
 %       cmtk_read_slurm_out(strpattern, txt2match)
 %
 % Args:
 %   strpattern: string pattern to find *.slurm files
-%   txt2match: pattern of characters to find within *.slurm files
+%       (default, '*')
+%   txt2match: cell with exactly two strings
+%       (default, {'DUE TO TIME LIMIT', 'Elapsed time is '})
+%       {1} = text that marks a job killed by the time limit
+%       {2} = text that marks a job that finished
+%
+% Returns:
+%   fileIdx: job index (number in the file name) per file, 0 if missing
+%   status: 1 if the file contains txt2match{1} OR does not contain
+%       txt2match{2} (i.e. job incomplete or failed), 0 if it finished
+%   out_filename: slurm file name per job index
+%
+% Notes:
+% job indices are read from the number in names like 'name_12.slurm'.
+% NOTE (known issue, not yet fixed): names with more than one underscore
+%   (e.g. 'cmtk_warp_12.slurm') are not parsed correctly and get skipped.
+% the branch that reads indices from non-slurm names cannot be reached
+%   because the file pattern always ends in '.slurm'.
 
 if ~exist('strpattern', 'var') || isempty(strpattern)
     strpattern = '*';

@@ -1,6 +1,7 @@
 function i_file = str2rm(i_str, i_file)
-% str2rm: function to find group of strings with
-%   non-overlapping names to i_str
+% str2rm: remove the files whose names contain a pattern.
+%   Input: pattern(s), file names (cell or dir/rdir struct).
+%   Output: the files that do NOT contain any of the patterns.
 %
 % Usage:
 %   i_file = str2rm(i_str, i_file)
@@ -10,7 +11,8 @@ function i_file = str2rm(i_str, i_file)
 %   i_file: is a string or a cell of strings (input files)
 % 
 % Returns:
-%   i_file: subset of i_file that matches i_str
+%   i_file: subset of i_file that does not contain any pattern of i_str
+%       (patterns are plain substrings, not regular expressions)
 
 if ~isempty(i_str)
     

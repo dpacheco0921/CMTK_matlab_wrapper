@@ -15,6 +15,11 @@ function [X, meta] = nrrdread(filename)
 %
 % Notes:
 % Copied and edited from http://www.mathworks.com/matlabcentral/fileexchange/34653-nrrd-format-file-reader?focused=6792784&tab=function
+% Source: MathWorks File Exchange entry 34653 (link above); original author
+%   and licence text not recorded in this file.
+% NOTE (known issue, not yet fixed): gzip temp files are deleted with
+%   'rm -f', which does nothing on Windows (no error), so they pile up in
+%   the temp folder. Detached headers ('data file:') are not supported.
 
 % Open file.
 fid = fopen(filename, 'rb');

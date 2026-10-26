@@ -1,4 +1,8 @@
-%% Params used for fly to ref registration
+%% Params for the demo (cmtk_demo.m): register ./images to 'nsybIVAidownsampled.nrrd' (affine dofs 3,6,9 + warp)
+% Sets p.* (ref2refreg, refiDir, refImSu, floatImSu, float2reject, floatiDir, gates) and iparams.* (G=170, J=1e-3, E=1); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% NOTE: float2reject = 'cb' skips any floating file whose name contains 'cb' (inherited from fly2ref_params.m).
+% This file has no 'global p' line, which is why it works inside batch_cmtkperfile.
 % notes
 % in general uses same registration parameters as used in refgen.m
 % it adds specifics for folder and file names

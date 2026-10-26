@@ -23,8 +23,16 @@ function [xyz_out, err_status, idx_status] = ...
 %       (eSuffix: extra string to select transformation)
 %           (default, '')
 %
+% Returns:
+%   xyz_out: reformatted xyz coordinates (same row order as xyz)
+%   err_status: 1 if streamxform reported FAILED for any point, else 0
+%   idx_status: row indices of the points that failed
+%
 % Notes:
 % it assumes you already have all the required transformations
+% NOTE (known issue, not yet fixed): the exit status of streamxform is not
+%   checked, and 'ifile.txt'/'ofile.txt' are written in the current folder
+%   (parallel runs in the same folder would overwrite each other).
 % inspired by xform.streamxform (NAT package, https://github.com/jefferis/nat)
 % see cmtk_xform_im cmtk_findxform_coord cmtk_xform
 
@@ -46,7 +54,7 @@ refo = strrep(refo, ibpars.imSuffix, '');
 xform = cmtk_findxform_coord(refo, refi, ...
     ibpars.transform_dir, ibpars.eSuffix);
 
-% write text file
+% write text file (streamxform reads one 'x y z' point per line from stdin)
 xyz_table = table(xyz(:, 1), xyz(:, 2), xyz(:, 3));
 writetable(xyz_table, 'ifile.txt', 'Delimiter', ' ', ...
     'WriteVariableNames', false, 'WriteRowNames', false)
@@ -56,6 +64,9 @@ fclose(fid);
 % writte command and submit (you could also add --affine-only)
 reformat_arg = 'streamxform --inversion-tolerance 1e-03 --precision 5 -- ';
 
+% why: the transformation string from cmtk_findxform_coord already carries
+%   the '--inverse' flags needed for points (points move the opposite way to
+%   images), so both branches currently build the same command
 if contains(xform, 'inverse')
     st2execute = [reformat_arg, xform, ' < ifile.txt > ofile.txt'];
 else

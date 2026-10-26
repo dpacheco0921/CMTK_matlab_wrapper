@@ -1,4 +1,7 @@
-%% Params used for the generation of reference brain
+%% Params to generate a reference brain from newer 'fotb' data, intensity-corrected, cleaned and sharpened images: floats '_intcor_clean_sharp' vs reference 'nsybIVAn_4_intcor_clean_sharp.nrrd'
+% Sets p.* (ref2refreg=1, ...) and iparams.* (same as refgen_params.m except G=136); no outputs. Family suffixes: see refgen_params.m.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% NOTE (to confirm): the reference number (n_4) differs from the sibling _intcor / _intcor_clean files (n_1).
 % Affine registration
 % function: registrationx outperforms registration (when using nmi)
 % initial affine: initially I used 'fov' but now I use 'com' which makes more sense

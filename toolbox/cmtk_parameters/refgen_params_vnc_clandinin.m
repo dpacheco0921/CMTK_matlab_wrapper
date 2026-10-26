@@ -1,4 +1,6 @@
-%% Params used for the generation of reference brain
+%% Params to generate a VNC reference brain from Clandinin-lab data: ./images_ch1 floats matching 'clean' vs reference 'seed_fly91_clean.nrrd'
+% Sets p.* (ref2refreg=1, ...) and iparams.* (same as refgen_params.m except G=128); no outputs. Family suffixes: see refgen_params.m.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
 % Affine registration
 % function: registrationx outperforms registration (when using nmi)
 % initial affine: initially I used 'fov' but now I use 'com' which makes more sense

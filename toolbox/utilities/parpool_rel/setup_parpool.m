@@ -1,8 +1,10 @@
 function [ppobj, ppprofile] = setup_parpool(deviceID, corenum)
-% setup_parpool Returns the index at which the max is found.
+% setup_parpool: start a local parallel pool unless one is already running.
+%   Input: device name, number of workers. Output: pool object and profile
+%   (both [] if a pool already existed).
 % 
 % Usage:
-%   pphandle = setup_parpool(deviceID, corenum)
+%   [ppobj, ppprofile] = setup_parpool(deviceID, corenum)
 %
 % Args:
 %   deviceID: 'int', internal, 'spock' or 
@@ -12,6 +14,12 @@ function [ppobj, ppprofile] = setup_parpool(deviceID, corenum)
 % Returns:
 %   ppobj: parpool obj
 %   ppprofile: parpool profile
+%
+% Notes:
+% Requires Parallel Computing Toolbox. On Linux/cluster (not pc, not mac, not
+%   'int') job files go to /tmp/<USER>-<SLURM_JOB_ID>.
+% NOTE (known issue, not yet fixed): on Linux with deviceID empty the
+%   contains() call errors (deviceID defaults to [] instead of '').
 % 
 % See also: parcluster parpool
 

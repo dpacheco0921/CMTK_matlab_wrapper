@@ -1,5 +1,8 @@
 function unix2dos(filein, dos2unix)
 % unix2dos: converts text file FILEIN from unix LF format to DOS CRLF format
+%   (input: file name and direction flag; output: none, the file is rewritten in place)
+%
+% Source: provenance/licence not recorded (no author or URL in this file).
 %   if the optional DOS2UNIX parameter is set to true, the conversion is 
 %   done the other way, i.e. DOS to UNIX format
 %

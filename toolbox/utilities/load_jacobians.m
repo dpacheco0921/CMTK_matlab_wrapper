@@ -1,9 +1,13 @@
 function load_jacobians(f2r_im, f2r_dir, sizY_2d, sizY_3d, ...
     bmask_int, dataObj, stat2use, iRes, oRes)
-% load_jacobians: load jacobian image per file and saves it in dataObj (variable Y)
+% load_jacobians: load one jacobian nrrd image per file, log-normalize each by
+%   its mean or median inside the mask, and store them as columns of dataObj.Y.
+%   Input: file names/dirs, sizes, mask, matfile object, options.
+%   Output: none returned; dataObj.Y, dataObj.sizY and dataObj.sizYo are written.
 %
 % Usage:
-%   load_jacobians(f2r_im, f2r_dir, sizY_2d, sizY_3d, bmask_int, dataObj)
+%   load_jacobians(f2r_im, f2r_dir, sizY_2d, sizY_3d, bmask_int, dataObj, ...
+%       stat2use, iRes, oRes)
 %
 % Args:
 %   f2r_im: file names
@@ -11,11 +15,20 @@ function load_jacobians(f2r_im, f2r_dir, sizY_2d, sizY_3d, ...
 %   sizY_2d: 2D size (flattened)
 %   sizY_3d: 3D size
 %   bmask_int: mask with voxels/pixels to use (sizY_2d)
+%   dataObj: matfile object (writable); receives Y [prod(sizY_3d), n_files],
+%       sizY [n_voxels, n_files] and sizYo (= sizY_3d)
 %   stat2use: stat to use for jacobian denominator)
 %       (1, mean, default)
 %       (2, median)
-%   iRes: original resolution
-%   oRes: target resolution
+%   iRes: original resolution (optional, [] = no resampling)
+%   oRes: target resolution (optional, [] = no resampling)
+%
+% Notes:
+% Requires interp3DxT (external, not in this repo) when resampling.
+% NOTE (known issues, not yet fixed): stat2use has no default in the code
+%   (it must be passed; other values than 1 or 2 leave the denominator
+%   undefined). The negative-value replacement uses the smallest value >= 0,
+%   which can be 0 and then gives -Inf after the log.
 
 if ~exist('iRes', 'var'); iRes = []; end
 if ~exist('oRes', 'var'); oRes = []; end
@@ -39,7 +52,8 @@ for i = 1:numel(f2r_im)
     sizY_2d_init = [prod(sizY_3d_init), 1];
     tdata = reshape(tdata, sizY_2d_init);
     
-    % replace negative values
+    % replace negative values (invalid for a jacobian) with the smallest
+    %   non-negative value, so the log below does not return complex numbers
     fprintf(['init_min : ', num2str(min(tdata))]); 
     minpos = min(tdata(tdata >= 0));
     tdata(tdata < 0) = minpos; 
@@ -59,7 +73,9 @@ for i = 1:numel(f2r_im)
         tm = median(tdata(bmask_int == 1));
     end
     
-    % normalize and get log
+    % divide by the mean/median inside the mask so brains of different size
+    %   are comparable, then take the log so expansion and contraction
+    %   (ratios above and below 1) are symmetric around 0
     tdata = log(tdata/tm);
     dataObj.Y(1:sizY_2d(1), i) = tdata;
     clear tdata

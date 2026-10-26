@@ -14,6 +14,9 @@ function cmtkpars = cmtk_paramgen(iparams, verbose_)
 %   cmtkpars: structure with all cmtk parameters to use
 %
 % Notes:
+% parameters G, R, J, I and E are strings (not numbers) because they are
+%   pasted directly into the command line.
+% 'make_initialaffine' below refers to the CMTK tool 'make_initial_affine'.
 % For more information on paramters read manual at 
 %   https://www.nitrc.org/docman/view.php/212/708/UserGuideCMTK.pdf
 % inspired by https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl

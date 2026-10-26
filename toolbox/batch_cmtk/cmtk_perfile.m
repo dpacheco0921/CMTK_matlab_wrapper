@@ -1,6 +1,8 @@
 function cmtk_perfile(paramfile, serverid, IntID)
-% cmtk_perfile: function that runs runs cmtk (using cmtk_intfunc)
-%   on a given folder (all files within 'images folder + reference image')
+% cmtk_perfile: run CMTK (using cmtk_intfunc) for ONE floating image (chosen by
+%   the job index) against its reference image; inputs are the args below
+%   (parameters are read from the *_cmtk.mat file written by batch_cmtkperfile),
+%   outputs are files on disk only (registration/, reformatted*/ folders), no return values.
 %
 % Usage:
 %   cmtk_perfile(paramfile, serverid, IntID)
@@ -29,7 +31,11 @@ function cmtk_perfile(paramfile, serverid, IntID)
 % 3) to generate jacobian:
 %   set p.jgate to 1 (used for dbm, see nsybIVAi_dbm.m)
 % 4) to register refIm to refIm:
-%   set p.refgate to 1 (used when generating atlases)
+%   set p.ref2refreg to 1 (used when generating atlases); only the last job
+%   of the array does it (see refgate below)
+% NOTE (known issues, not yet fixed): p.iFloat / p.iFloat_dir have no default
+%   in batch_cmtkperfile; cmtk_intfunc failures are only printed, never
+%   raised, so a failed step does not stop later steps.
 
 timeint = tic;
 fprintf('\nRunning registration of volumes using CMTK\n');
@@ -50,11 +56,15 @@ else
     tDir = [tempfiledir, filesep, 'jobsub', filesep, 'regrel'];
     load([tDir, filesep, paramfile, '_cmtk.mat'], ...
         'floatIm', 'floatFol', 'refIm', 'refFol', 'p', 'iparamscell')
-    % p.Cdir is updated to the one saved in the _impre.mat file
+    % p.cDir is the data folder saved in the *_cmtk.mat file (written by
+    %   batch_cmtkperfile); the cluster job index (SLURM array task id) is
+    %   used as taskID, which selects the floating image to run.
     taskID = getclus_taskid(serverid);
     
 end
 
+% taskID: position (1..numT) of this job; it picks the floating image
+%   (and reference image) in select_files_dirs below.
 % Decide if it runs ref2ref reg on this job,
 %   only does it on the last job per array of jobs
 refgate = (taskID == numel(floatIm)) & p.ref2refreg;
@@ -97,6 +107,10 @@ cmtk_intfunc('ia',  p.redo, floatIm, [], refIm, ...
 
 % there is a bug in windows, and initial affine does not always work, the
 % temporary solution is to make a text file with no net transformation
+% (so later steps that expect an initial-affine file always find one).
+% NOTE (known issue, not yet fixed): this runs on every system and even when
+%   iparams.initf2use is 0 (when the 'ia' call above does nothing), and it
+%   hides a real make_initial_affine failure by silently starting from identity.
 
 iaDir = ['.', filesep, 'registration', filesep, 'affine'];
 iaFilename = [strrep(refIm, '.nrrd', ''), '_', strrep(floatIm, '.nrrd', ''), '_pa.list'];
@@ -120,11 +134,13 @@ if p.agate == 1
     iparams.rLevel = 'a';
     
     % retrieve affine reg
+    % (p.ar: reformat the floating image after each stage so the result of
+    %   the affine can be checked before the slow warp finishes)
     if p.ar == 1
         cmtk_intfunc('r', p.redo, floatIm, [], refIm, ...
             [], [], rfDir, iDir, [], [], iparams);
     end
-    
+
 end
 
 % run affine refinement (so far works for all w or wm images)
@@ -239,6 +255,8 @@ end
 % requires images to be in images_ch2
 if p.rgate_ch2 == 1
     
+    % NOTE (known issue, not yet fixed): strrep assumes iDir has the same form
+    %   as p.floatiDir; with floatiDir = '.' it rewrites every '.' in iDir.
     iDir_ch2 = strrep(iDir, p.floatiDir, p.floatiDir_2);
     iparams.rgate_ch2 = p.rgate_ch2;
     iparams.ch2chSu = p.ch2chSu;
@@ -292,6 +310,9 @@ function [floatIm, iDir, refIm, rfDir, iparams] = ...
 %       select_files_dirs(taskID, floatIm, floatFol, ...
 %       refIm, refFol, iparamscell)
 %
+% Outputs: the single floating image, its folder, reference image, its
+%   folder and registration parameters for this job.
+%
 % Args:
 %   taskID: index (from cluster or manual)
 %   floatIm: set of floating images (cell)
@@ -302,6 +323,10 @@ function [floatIm, iDir, refIm, rfDir, iparams] = ...
 
 iDir = [];
 rfDir = [];
+
+% NOTE (known issue, not yet fixed): if there are several references and a
+%   different number (>1) of floating images, no branch below matches and
+%   refIm stays a cell array.
 
 % select ref image and its directory
 if iscell(refIm)

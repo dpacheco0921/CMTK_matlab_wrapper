@@ -1,5 +1,7 @@
 function nrrd2nii(FolderName, FileName, iparams)
-% nrrd2nii: function that converts nrrd images to nii an viceversa
+% nrrd2nii: convert nrrd images to nii, or nii to nrrd, for all matching files.
+%   Input: folder/file name filters and a parameter struct. Output: none
+%   returned, converted files are saved (same folder unless oDir is given).
 %
 % Usage:
 %   nrrd2nii(FolderName, FileName, iparams)
@@ -7,13 +9,26 @@ function nrrd2nii(FolderName, FileName, iparams)
 % Args:
 %   FolderName: Folder name to load
 %   FileName: File name to load
-%   ip: parameters to update
+%   iparams: parameters to update
 %       (im_direction: from which format to waht to do the conversion)
 %           (default, 1, from nrrd 2 nii, 2 from nii to nrrd)
 %       (dir_depth: depth of directory search)
 %           (default, 1)
 %       (nchannels: number of channels)
 %           (2, default)
+%       (im_format: file extensions {from nrrd, from nii})
+%           (default, {'.nrrd', '.nii'})
+%       (oDir: output directory)
+%           (default, [], same directory as input file)
+%
+% Returns:
+%   none (files are written to disk)
+%
+% Notes:
+% Requires mat2uint16 (external, not in this repo) and the MATLAB niftiread/
+%   niftiwrite/niftiinfo functions (Image Processing Toolbox).
+% FolderName and FileName are substring filters on directory and file name;
+%   files are searched from the current directory, dir_depth levels down.
 
 % Default iparams
 z2spars.im_direction = 1;

@@ -1,10 +1,10 @@
 function xform = cmtk_findxform(target, source, ...
     transformation_dir, transform2ignore)
-% cmtk_findxform: find the folder with the 
-%   transfomations given the target and source inputs 
+% cmtk_findxform: find the transformation folder (as a command-line string
+%   for reformatx) given the target and source names, for transforming images
 %
 % Usage:
-%   xform = cmtk_findxform(target, source, transformation_dir)
+%   xform = cmtk_findxform(target, source, transformation_dir, transform2ignore)
 %
 % Args:
 %   target: target atlas
@@ -15,7 +15,13 @@ function xform = cmtk_findxform(target, source, ...
 %      (default, [])
 %
 % Returns:
-%   xform: full path of transformation
+%   xform: full path of transformation, with '--inverse ' in front when
+%       only the opposite-direction folder exists ('' if none found)
+%
+% Notes:
+% NOTE (known issue, not yet fixed): if several folders match the wildcard,
+%   their names are concatenated into one invalid path. Also 'Yes-InDirect'
+%   is printed even when the direct transformation was found.
 
 if ~exist('transformation_dir', 'var')
     transformation_dir = '.';

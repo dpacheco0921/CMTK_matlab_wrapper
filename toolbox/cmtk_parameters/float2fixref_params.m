@@ -1,4 +1,7 @@
-%% Params used for the generation of reference brain
+%% Params to register any floating image (./images) to a fixed reference atlas (default 'JFRC2.' from regrelated_directories); affine only (wgate=0)
+% Sets p.* (ref2refreg, floatiDir, refiDir, refImSu, floatImSu, redo, wgate, agate) and iparams.* (affine/warp settings; G chosen from the atlas name below); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% NOTE (known issues, not yet fixed): iparams.rC is not used by any function; the 'JFRC2018' branch never matches names like 'JRC2018f.'; G is not recomputed if cmtk_editparams later changes p.refImSu.
 % Starting with default refgen params
 
 % which reference image to use

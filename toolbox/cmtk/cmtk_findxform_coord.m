@@ -1,10 +1,11 @@
 function xform = cmtk_findxform_coord(target, ...
     source, transformation_dir, extra_suffix)
-% cmtk_findxform: find the folder with the 
-%   transfomations given the target and source inputs 
+% cmtk_findxform_coord: find the transformation folder (as a command-line
+%   string for streamxform) given the target and source names, for
+%   transforming coordinates (see cmtk_findxform for images)
 %
 % Usage:
-%   xform = cmtk_findxform(target, ...
+%   xform = cmtk_findxform_coord(target, ...
 %       source, transformation_dir, extra_suffix)
 %
 % Args:
@@ -16,9 +17,13 @@ function xform = cmtk_findxform_coord(target, ...
 %       (default, '')   
 %
 % Returns:
-%   xform: full path of transformations
+%   xform: full path of transformation, with '--inverse ' in front when
+%       the folder found is the one that needs inverting ('' if none found)
 %
 % Notes:
+% NOTE (known issue, not yet fixed): if several folders match the wildcard
+%   (e.g. both an affine and a warp list), their names are concatenated into
+%   one invalid path instead of choosing one.
 % be aware that for coordinates the format is different than for reformatx
 %   A*B*C is C^-1*B^-1*A^-1
 % if reformatx gets: "a.xform b.xform c.xform"

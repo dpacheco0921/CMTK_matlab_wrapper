@@ -1,10 +1,11 @@
 function cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
-% cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
-%   deformation-based morphometry, it loads jacobians from 'nrrd' files and
-%   saves them in a memmap '.mat' file, calculates two-sample t-statistic
+% cmtk_dbm_parse_j_and_tval: deformation-based morphometry, it loads
+%   jacobians from 'nrrd' files and saves them in a memmap '.mat' file,
+%   calculates two-sample t-statistic, and generates (but does not
+%   evaluate) the shuffled group assignments for a permutation test
 %
 % Usage:
-%   cmtk_dbm_raw_cmp_tval(inputfiles, iparams)
+%   cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
 %
 % Args:
 %   inputfiles: files to load per group (two groups), each group is collection of cells
@@ -32,7 +33,8 @@ function cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
 %       (vartype: variance type for ttest)
 %           (default, 'equal')
 %       (gidx: file indeces of groups to compare)
-%           (default, [])
+%           (default, []; currently overwritten by the groups built from
+%           inputfiles, so it has no effect)
 %       ****** permutation-related ******
 %       (pern: number of permutations)
 %           (default, 10^4)
@@ -48,9 +50,19 @@ function cmtk_dbm_parse_j_and_tval(inputfiles, iparams)
 %       (oRes: output resolution)
 %           (default, [], same as original)
 %
+% Returns:
+%   (none; results are saved in [oDir, filesep, ofname, '.mat'] as
+%   group_idx, pix2use, Y, sizY, sizYo, t_val, p_t_val, p_t_val_b,
+%   group_idx_g1 and group_idx_g2)
+%
 % Notes:
 % inspired by Cachero et al 2010 (https://www.ncbi.nlm.nih.gov/pubmed/20832311)
-% see bibmem_ttest2 cmtk_dbm
+% see bibmem_ttest2 cmtk_dbm_parse_j_and_tval_and_tnull
+% NOTE (known issue, not yet fixed): when oRes is empty (default) the
+%   variable iRes is never defined, so the first run errors; oRes also
+%   requires imaskDir/imaskIm; with few samples fewer than 'pern' distinct
+%   permutations exist and the indexing errors; reusing an existing .mat
+%   with different inputfiles silently mixes old and new data.
 
 % default params
 dbm = [];
@@ -93,7 +105,8 @@ end
 
 % 4) Load jacobian images per file and save them in dataObj
 
-% load brain mask:
+% load brain mask: only voxels inside the mask are used to normalize
+%   each jacobian (by its mean or median) and to find extreme t-values
 if ~isempty(dbm.imask) && ...
         ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
     
@@ -110,7 +123,7 @@ else
     
 end
 
-% change resolution
+% change resolution (resample the mask to the requested output resolution)
 if ~isempty(dbm.oRes)
     
    [~, meta] = nrrdread([dbm.imaskDir, filesep, dbm.imaskIm, '.nrrd']);
@@ -156,6 +169,10 @@ else
 end
 
 % 6) permute group identity and save
+% why: a permutation test needs many random re-labelings of which files
+%   belong to group 1; we draw pern + 100 random sets, drop duplicates, keep
+%   pern of them, and store each set with its complement (group 2). The t-test
+%   itself is not run on them here (see cmtk_dbm_parse_j_and_tval_and_tnull).
 
 fprintf('Computing shuffle data\n')
 all_idx = 1:numel(f2r_im);

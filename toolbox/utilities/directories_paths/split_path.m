@@ -1,8 +1,9 @@
 function [oFile, iDir] = split_path(iFile)
-% split_path: it splits path into file name and full directory
+% split_path: split path(s) into file name and directory.
+%   Input: path string or cell of paths. Output: file name(s) and directory(s).
 % 
 % Usage:
-%   iFile = split_path(InputFiles)
+%   [oFile, iDir] = split_path(iFile)
 %
 % Args:
 %   iFile: input files to chop
@@ -10,6 +11,11 @@ function [oFile, iDir] = split_path(iFile)
 % Returns:
 %   oFile: file name(s) in cells
 %   iDir: file directory(s) in cells
+%
+% NOTE (known issue, not yet fixed): the file name is found by removing
+%   [directory, filesep] from the path, so a path written with the other
+%   separator (e.g. '/' on Windows) or a root folder returns the whole path
+%   as the file name. Empty input returns [] instead of an empty cell.
 
 idelimiter = filesep;
 

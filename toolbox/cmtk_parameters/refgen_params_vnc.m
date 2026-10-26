@@ -1,4 +1,7 @@
-%% Params used for the generation of reference brain
+%% Params to generate a VNC (ventral nerve cord) reference brain: ./images_ch1_prepros floats '_01.' vs reference 'nsybIVAn_5.nrrd'
+% Sets p.* (ref2refreg=0, ...) and iparams.* (same as refgen_params.m except G=150); no outputs. Family suffixes: see refgen_params.m.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% NOTE (to confirm): p.ref2refreg = 0 here (and in the other _vnc files except _vnc_clandinin), unlike the other refgen files (1).
 % Affine registration
 % function: registrationx outperforms registration (when using nmi)
 % initial affine: initially I used 'fov' but now I use 'com' which makes more sense

@@ -1,5 +1,5 @@
 function cmtk_dbm_parse_j_and_tval_and_tnull(inputfiles, iparams)
-% cmtk_dbm_parse_j_and_tval_and_tnull(inputfiles, iparams): 
+% cmtk_dbm_parse_j_and_tval_and_tnull:
 %   deformation-based morphometry, it loads jacobians from 'nrrd' files and
 %   saves them in a memmap '.mat' file, calculates two-sample t-statistic,
 %   and the null distribution of t-stat (same method as Cachero et al 2010).
@@ -33,7 +33,8 @@ function cmtk_dbm_parse_j_and_tval_and_tnull(inputfiles, iparams)
 %       (vartype: variance type for ttest)
 %           (default, 'equal')
 %       (gidx: file indeces of groups to compare)
-%           (default, [])
+%           (default, []; currently overwritten by the groups built from
+%           inputfiles, so it has no effect)
 %       ****** permutation-related ******
 %       (pern: number of permutations)
 %           (default, 10^4)
@@ -49,7 +50,18 @@ function cmtk_dbm_parse_j_and_tval_and_tnull(inputfiles, iparams)
 %       (oRes: output resolution)
 %           (default, [], same as original)
 %
+% Returns:
+%   (none; results are saved in [oDir, filesep, ofname, '.mat'] as
+%   group_idx, pix2use, Y, sizY, sizYo, t_val, p_t_val (min and max t per
+%   permutation, all voxels), p_t_val_b (same, inside the mask only),
+%   group_idx_g1 and group_idx_g2)
+%
 % Notes:
+% NOTE (known issue, not yet fixed): when oRes is empty (default) the
+%   variable iRes is never defined, so the first run errors; when resuming an
+%   interrupted run, group 2 is wrongly set to group_idx_g1 (instead of
+%   group_idx_g2), which gives a wrong null distribution; with few samples
+%   fewer than 'pern' distinct permutations exist and the indexing errors.
 % inspired by Cachero et al 2010 (https://www.ncbi.nlm.nih.gov/pubmed/20832311)
 % the calculation of the null distribution is computationally expensive
 %   (depending on the image resolution it can take from tens of hours to days)
@@ -98,7 +110,8 @@ end
 
 % 4) Load jacobian images per file and save them in dataObj
 
-% load brain mask:
+% load brain mask: only voxels inside the mask are used to normalize
+%   each jacobian (by its mean or median) and to find extreme t-values
 if ~isempty(dbm.imask) && ...
         ~isempty(dbm.imaskDir) && ~isempty(dbm.imaskIm)
     
@@ -115,7 +128,7 @@ else
     
 end
 
-% change resolution
+% change resolution (resample the mask to the requested output resolution)
 if ~isempty(dbm.oRes)
     
    [~, meta] = nrrdread([dbm.imaskDir, filesep, dbm.imaskIm, '.nrrd']);
@@ -162,6 +175,10 @@ end
 
 % 6) Calculate distribution of extremes from random permutation
 % permute group identity
+% why: re-labeling files at random breaks any true group difference, so the
+%   largest/smallest t-values found across the image in each permutation
+%   show how extreme a t-value can be by chance (null distribution).
+%   k is the first iteration still to run, so an interrupted run can resume.
 
 fprintf('Computing ttest for random data\n')
 pix2use = find(bmask_int == 1);
@@ -174,6 +191,8 @@ if ~isprop(dataObj, 'p_t_val') || ...
     dataObj.p_t_val = [];
     dataObj.p_t_val_b = [];
     
+    % draw pern + 100 random group-1 sets (extra ones cover duplicates),
+    %   keep unique ones, and pair each with its complement as group 2
     group_idx_g1 = gen_group_shuffle_n(numel(all_idx), dbm.gidx{1}, (dbm.pern + 10^2));
     group_idx_g1 = unique(group_idx_g1, 'rows');
     group_idx_g1 = group_idx_g1(1:dbm.pern, :);
@@ -187,6 +206,7 @@ if ~isprop(dataObj, 'p_t_val') || ...
     
 else
     
+    % resume: reload the saved permutations and continue where it stopped
     fprintf('Already calculated permutations\n')
     group_idx_g1 = dataObj.group_idx_g1;
     group_idx_g2 = dataObj.group_idx_g1;
@@ -194,7 +214,7 @@ else
     
 end
 
-% calculate extreme t-vals
+% calculate extreme t-vals (min and max over all voxels, and over mask voxels)
 for i = k:dbm.pern
     
     fprintf(['Running iteration #', num2str(i), '\n'])

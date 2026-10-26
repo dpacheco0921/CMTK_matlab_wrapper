@@ -5,8 +5,8 @@ function nrrd_edit(FolderName, FileName, iparams)
 %   nrrd_edit(FolderName, FileName, iparams)
 %
 % Args:
-%   FolderName: nrrd metadata as output from nrrdread.m
-%   FolderName: nrrd metadata as output from nrrdread.m
+%   FolderName: only edit files whose directory contains this string ([] = all)
+%   FileName: only edit files whose name contains this string ([] = all)
 %   iparams: parameters to update
 %       (XYZres: pixel resolution ('x y z', 'width height depth'))
 %           (default, [])
@@ -18,16 +18,31 @@ function nrrd_edit(FolderName, FileName, iparams)
 %           (default, [])
 %       (cuboid2erode: creates a 3-D cuboidal structuring element of size [m n p])
 %           (default, [])
-%       (medfilt: median filter)
-%           (default, [3 3 1])
-%       (dir_depth: depth of directory search)
+%       (medfilt: median filter window, e.g. [3 3 1])
+%           (default, [], no filtering)
+%       (dir_depth: depth of directory search, values above 1 act as 2)
 %           (default, 0)
+%       (fsuffix: file suffix/extension to look for)
+%           (default, '.nrrd')
 %       (flip_axis: axis to flip)
 %           (default, [0 0 0], 'height witdh depth')
 %       (save_mirror: save also mirror image on selected axis)
 %           (default, [0 0 0], 'height witdh depth')
-%       (save_mirror_str: string to replace for naming mirror image)
-%           (default, {'w', 'mw'}, 'height width depth')
+%       (save_mirror_str: [n_axes x 2] cell, {string to replace, replacement}
+%           per axis, used for naming the mirror image)
+%           (default, {'w', 'ymw'; 'w', 'xmw'; 'w', 'zmw'}, 'height width depth')
+%
+% Returns:
+%   none (each file is rewritten in place)
+%
+% Notes:
+% Requires mat2uint16 and mat2uint8 (external, not in this repo), and the
+%   Image Processing Toolbox (medfilt3, imfill, imerode, strel).
+% NOTE (known issues, not yet fixed): the edited image overwrites the input
+%   file, and the numeric type defaults to uint16 (intensities rescaled) even
+%   if numtype is empty. The mirror name is made by strrep on the FULL path,
+%   so a 'w' in a folder name changes the folder, and if the token is not
+%   in the file name the mirror overwrites the original.
 
 if ~exist('FileName','var')
     FileName = [];
@@ -114,16 +129,18 @@ function editnrrd(filename, ipars)
 %           (default, [])
 %       (cuboid2erode:  creates a 3-D cuboidal structuring element of size [m n p])
 %           (default, [])
-%       (medfilt: median filter)
-%           (default, [3 3 1])
-%       (dir_depth: depth of directory search)
+%       (medfilt: median filter window, e.g. [3 3 1])
+%           (default, [], no filtering)
+%       (dir_depth: depth of directory search, values above 1 act as 2)
 %           (default, 0)
+%       (fsuffix: file suffix/extension to look for)
+%           (default, '.nrrd')
 %       (flip_axis: axis to flip)
 %           (default, [0 0 0], 'height witdh depth')
 %       (save_mirror: save also mirror image on selected axis)
 %           (default, [0 0 0], 'height witdh depth')
 %       (save_mirror_str: string to replace for naming mirror image)
-%           (default, {'w', 'mw'}, 'height witdh depth')
+%           (default, {'w', 'ymw'; 'w', 'xmw'; 'w', 'zmw'}, 'height width depth')
 
 % load image
 [Data, meta] = nrrdread(filename);
@@ -174,7 +191,8 @@ switch numtype
 
 end
 
-% erode image
+% erode image: build a mask of the brain (smooth, fill holes), shrink it so
+%   the noisy edge planes are excluded, and zero everything outside it
 if ~isempty(ipars.cuboid2erode)
     
     % fill in holes

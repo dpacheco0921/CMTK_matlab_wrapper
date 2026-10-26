@@ -1,4 +1,7 @@
-%% Params used for the generation of reference brain
+%% Params to generate a reference brain: register every image in ./images to reference 'nsybIVAi.nrrd' (affine + warp), plus the reference to itself
+% Sets p.* (ref2refreg=1, refImSu, floatiDir, refiDir, gates, redo) and iparams.* (affine/warp settings, G=170); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% Base file of the refgen_params_* family. Name suffixes (inferred): _vnc = ventral nerve cord data, _newfotb / _fotb = fly-on-ball style data (older / newer set), _intcor = intensity-corrected images, _clean = cleaned images, _sharp = sharpened images, _clandinin = data from the Clandinin lab; they only change file names, folders and G.
 % Affine registration
 % function: registrationx outperforms registration (when using nmi)
 % initial affine: initially I used 'fov' but now I use 'com' which makes more sense

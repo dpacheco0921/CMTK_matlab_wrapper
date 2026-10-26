@@ -1,5 +1,9 @@
-%% Params used for the generation of reference brain
+%% Params to register atlas (reference) brains to each other (atlas to atlas)
+% Sets p.* (ref2refreg, floatiDir, refiDir, refImSu, floatImSu, redo, wgate, agate)
+%   and iparams.* (affine + warp settings, G picked per target atlas); no outputs.
 % Starting with default refgen params
+% NOTE (known issue, not yet fixed): the grid-spacing block below uses
+%   p.rIm2sel, which is never defined, so this script errors when run.
 
 global p
 % which reference image to use

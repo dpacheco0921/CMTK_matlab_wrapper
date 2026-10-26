@@ -28,6 +28,16 @@ function [varargout] = rdir(rootdir,varargin)
 %
 % See also DIR
 %
+% Output:
+%   D: struct array like the one from dir (files only), name includes the path
+%
+% Source: provenance/licence not recorded (no author, URL or licence text in
+%   this file).
+% Notes:
+% NOTE (known issue, not yet fixed): the path is split using filesep only,
+%   so on Windows a pattern written with forward slashes loses its directory
+%   part in the returned names. The TEST string is run with eval.
+%
 % examples:
 %   D = rdir('*.m');
 %     for ii=1:length(D), disp(D(ii).name); end;

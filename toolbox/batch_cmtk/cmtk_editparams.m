@@ -1,7 +1,31 @@
 function [p, registration_params] = ...
     cmtk_editparams(reg_edit, p, registration_params)
-% cmtk_editparams: modify registration parameters on the go
-%   encoded on reg_edit (it does it serially for each value in vector reg_edit)
+% cmtk_editparams: modify registration parameters on the go, encoded as numeric
+%   codes in reg_edit (applied one by one for each value in the vector reg_edit);
+%   sets fields of p and registration_params and returns both.
+%
+% Edit codes (as implemented in edit_per_value below; unknown codes do nothing):
+%   affine function:  1 registrationx (regf2use = 1), 2 registration (regf2use = 0)
+%   metric:           3/4/5 affine msd/nmi/ncc (aM); 6 warp msd, 8 warp ncc (wM)
+%                     7 sets aM = nmi (NOTE known issue, not yet fixed: likely meant wM = nmi)
+%   initial affine:   9 use make_initial_affine (initf2use = 1)
+%   jacobian weight:  11 J=0, 12 J=1e-1, 13 J=1e-2, 14 J=1e-3
+%   grid size G, refinements R: 15 G=40,R=3; 16 G=80,R=4; 17 G=170,R=5
+%   energy weight:    18 E=1e-1, 19 E=1
+%   refgen related:   20 p.refImSu='nsybIVAn_1'; 21 G=160; 22 p.refImSu='JFRC2_cbrain_m.';
+%                     26 p.refImSu='JRC2018f.'; 27 p.refImSu='JRC2018u.'
+%   affine dofs:      30 dofs 3,6,9,12; 31 dofs 3,6,9; 32 dofs 3,6; 33 dofs 3
+%   ref2ref (fixed brains as targets, floating = 'nsybIVA.'): sets p.refImSu, p.floatImSu and G:
+%                     41 IBNWBs2th G=90; 42 JFRC2s2th G=102; 43 IS2 G=85; 44 T1 G=85; 45 FCWB G=54
+%   dsx fly2ref:      51 (dofs 3,6, nmi, ref 'dsxIVA_iTh_m', floats '_w' in '.', refDir ../refDsx);
+%                     52 same as 51 without setting aM
+%   virilis fly2ref:  61 (ref 'DvirIS.nrrd', floats 'w_02' in '.', nmi, G=85)
+%   default refIm:    70 p.floatImSu = {'w_01'}
+%   combination:      80 G=40, R=3, E=1
+%   (codes whose meaning changed or were removed are listed in the comments
+%   inside edit_per_value and in the deprecated block at the end of the file;
+%   G = control point grid spacing, R = number of grid refinements, J/E = jacobian
+%   and smoothness-energy constraint weights, see cmtk_paramgen)
 %
 % Usage:
 %   [p, registration_params] = ...

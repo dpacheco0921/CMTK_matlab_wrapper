@@ -1,3 +1,9 @@
+% cmtk_install_notes: notes only (no code, nothing to run); how to install CMTK (the
+%   command-line tools this wrapper calls) on Windows. Input: none. Output: working CMTK
+%   binaries (registrationx, warpx, reformatx, ...) reachable from MATLAB.
+% NOTE: Linux/Mac and cluster setups are not covered here (the cluster job script loads
+%   the 'cmtk/3.3.1' and 'matlab/R2019b' modules, see batch_cmtkperfile.m).
+% To check the install, run in MATLAB: system('registrationx --version')
 %% Install windows:
 % see https://github.com/jefferis/nat/blob/master/vignettes/Installation.Rmd
 
@@ -12,3 +18,6 @@
 % 6 Optionally add `C:\cygwin64\bin` to your windows path (since v1.8.10 nat should 
 %   look after this - see ?cmtk.bindir).
 % 7 Add CMTK folders to your windows environment path (also cygwin binaries folder)
+%   (the CMTK folder is the one holding the extracted binaries, usually
+%   C:\cygwin64\usr\local\lib\cmtk\bin, plus C:\cygwin64\bin; restart MATLAB afterwards
+%   so it sees the new path)

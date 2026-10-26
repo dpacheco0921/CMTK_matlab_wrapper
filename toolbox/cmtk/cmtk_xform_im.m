@@ -34,9 +34,14 @@ function status_ = cmtk_xform_im(refi, refo, iFloat, oFloat, iparams)
 %           (default, [])
 %
 % Returns:
-%   status_: command exit status
+%   status_: 1 if a transformation was found and the command was launched,
+%       0 if no transformation was found
+%       NOTE (known issue, not yet fixed): this is not the real exit status
+%       of reformatx; the status returned by coexecuter is discarded
 %
 % Notes:
+% NOTE (known issue, not yet fixed): output/input image names are always
+%   given a hardcoded '.nrrd' extension, ignoring iparams.imsuffix
 % it assumes you already have all the required transformations generated
 %   using cmtk_intfunc
 
@@ -95,9 +100,12 @@ if ~isempty(xform)
         ' --floating ', iFloat, ' ', refo, ' ', xform];
 
     % correct string to work on cygwin (when using PC)
+    % why: CMTK runs under Cygwin on Windows, which does not understand
+    %   'C:\folder' paths, so we turn them into '/cygdrive/c/folder'
     if ispc
 
-        % correct drive names
+        % correct drive names (switch backslashes to '/', turn the drive
+        %   letter before ':' into '/cygdrive/<lowercase letter>', drop ':')
         st2execute = strrep(st2execute, filesep, '/');
         spattern = '\w*(?=:)'; replace = '/cygdrive/${lower($0)}';
         st2execute = regexprep(st2execute, spattern, replace);

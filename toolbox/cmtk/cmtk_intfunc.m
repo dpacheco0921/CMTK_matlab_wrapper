@@ -31,7 +31,15 @@ function out = cmtk_intfunc(func2use, redo, iIm, oIm, ...
 %
 % Notes:
 %   inspired by https://github.com/jefferis/AnalysisSuiteBin/blob/master/munger.pl
+%   iparams should be the full structure from cmtk_paramgen
+%   NOTE (known issue, not yet fixed): when iparams is empty, 'intregpar' is
+%     never defined and the function errors; when iparams is given it is
+%     used as is (not merged with the defaults), so partial structures fail.
+%   NOTE (known issue, not yet fixed): command failures and a missing affine
+%     for the warp are only printed, not raised, so 'Done' is shown anyway.
+%   input empty values for oDir/refDir/iDir/aDir/xDir select default folders.
 
+% default parameters: use cmtk_paramgen defaults if none were given
 if ~exist('iparams', 'var') || isempty(iparams)
     fprintf('generating iparams from default settings\n')
     iparams = [];
@@ -285,6 +293,7 @@ if isempty(oIm)
 end
 
 % get default affine transformation name
+% why: the warp starts from the affine found with the same default naming
 affinexform = [dirpar.aDir, filesep, strrep(refIm, dirpar.fisuffix, ''), ...
     '_', strrep(iIm, dirpar.fisuffix, ''), '_', a_suffix_gen(intregpar)];
 
@@ -378,7 +387,7 @@ if isempty(xform)
     
 end
 
-% add jacobian suffix
+% add jacobian suffix (so jacobian images can be told apart from intensity ones)
 extrasuf = '';
 if jgate
     extrasuf = '_j';
@@ -530,10 +539,11 @@ end
 end
 
 function commandexecuter(command2run, oIm, redo, verbose)
-% commandexecuter: executes commands from terminal, (PC/linux/Mac compatible)
+% commandexecuter: runs a command unless its output already exists
+%   (PC/linux/Mac compatible), prints success or failure; no outputs
 %
 % Usage:
-%   status = coexecuter(CommandStr)
+%   commandexecuter(command2run, oIm, redo, verbose)
 %
 % Args:
 %   command2run: command string
@@ -544,6 +554,9 @@ function commandexecuter(command2run, oIm, redo, verbose)
 status = 0;
 
 % test if registration file already exists
+% why: transformations are folders holding a 'registration' file (maybe
+%   gzipped), images are plain files; we skip the run if any exists so that
+%   interrupted batches can be restarted without redoing finished jobs
 file_t1 = [oIm, filesep, 'registration'];
 file_t2 = [strrep(oIm, 'j0', ''), filesep, 'registration'];
 exist_status = exist(fullfile(oIm), 'file') == 2 || ...

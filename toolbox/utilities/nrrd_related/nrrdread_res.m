@@ -9,6 +9,10 @@ function iXYZres = nrrdread_res(meta)
 %
 % Returns:
 %   iXYZres: pixel resolution ('x y z', 'width height depth')
+%
+% Notes:
+% Reads the i-th component of the i-th 'space directions' vector, so it
+%   assumes axis-aligned (diagonal) directions; signs are not removed.
 
 fres = 10^4; % max resolution
 init = strfind(meta.spacedirections, '(');

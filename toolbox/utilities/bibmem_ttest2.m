@@ -1,13 +1,16 @@
 function t_val = bibmem_ttest2(Y, gIdx_1, gIdx_2, ...
     vartype, chunk_size, corenum)
-% bibmem_ttest2: function to run ttest using big matrices (that need partitioning)
+% bibmem_ttest2: two-sample t-test per row of a big on-disk matrix, run in
+%   chunks across parallel workers. Input: matfile object Y plus two group
+%   index vectors. Output: column vector of t-statistics (one per row).
 %
 % Usage:
 %   t_val = bibmem_ttest2(Y, gIdx_1, gIdx_2, ...
 %       vartype, chunk_size, corenum)
 %
 % Args:
-%   Y: matrix [n, 2] with values to use for ttest
+%   Y: matfile object (e.g. from load_jacobians) with fields
+%       Y.Y (rows = voxels, columns = samples) and Y.sizY ([n_rows, n_samples])
 %   gIdx_1: indeces of group 1
 %   gIdx_2: indeces of group 2
 %   vartype: variance type for ttest)
@@ -18,8 +21,17 @@ function t_val = bibmem_ttest2(Y, gIdx_1, gIdx_2, ...
 %       (default, 4)
 % 
 % Returns:
-%   t_val: t-statistics
+%   t_val: t-statistics, column vector [n_rows, 1]
+%
+% Notes:
+% Requires Statistics and Machine Learning Toolbox (ttest2) and
+%   Parallel Computing Toolbox (parfor); uses ppool_makechunks.
+% NOTE (known issue, not yet fixed): the defaults listed above for vartype,
+%   chunk_size and corenum are not applied in the code, so all six
+%   arguments must be passed.
 
+% Rows are processed in chunks of chunk_size rows, corenum chunks at a time
+%   in parallel, because the full matrix does not fit in memory.
 sizY = Y.sizY;
 t_val = zeros(sizY(1), 1);
 

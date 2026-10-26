@@ -1,9 +1,10 @@
 function xyz = getObj_xyz(iObject)
-% getObj_xyz: function that extracts XYZ coordinates
-%   from tree/matrix/mesh
+% getObj_xyz: extract XYZ coordinates from a tree, matrix, or mesh.
+%   Input: tree struct / mesh struct / matrix / cell. Output: [n, 3] matrix
+%   (or a cell of them for groups of traces).
 %
 % Usage:
-%   getObj_xyz(iObject)
+%   xyz = getObj_xyz(iObject)
 %
 % Args:
 %   iObject: tree/matrix/mesh obj
@@ -13,6 +14,8 @@ function xyz = getObj_xyz(iObject)
 %
 % Notes:
 % compatible with tree format from https://github.com/cuntzlab/treestoolbox
+% NOTE (known issue, not yet fixed): a plain matrix whose second dimension
+%   is not 3 is transposed without checking that the result has 3 columns.
 
 if isstruct(iObject)
     

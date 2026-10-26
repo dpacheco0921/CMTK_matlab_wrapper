@@ -1,5 +1,6 @@
 function newstr = strprune(string, delimiter, string2keep)
-% strprune: function to to split a string and reconstitutes parts of it
+% strprune: split a string on a delimiter and rebuild it from some of the pieces.
+%   Input: string, delimiter, pieces to keep. Output: rebuilt string.
 %
 % Usage:
 %   newstr = strprune(string, delimiter, string2keep)
@@ -7,7 +8,15 @@ function newstr = strprune(string, delimiter, string2keep)
 % Args:
 %   string: input string
 %   delimiter: delimiter pattern to split string
-%   string2keep: number of string pieces to keep
+%   string2keep: number of string pieces to keep (scalar n keeps pieces 1:n),
+%       or a vector of piece indices to keep
+%
+% Returns:
+%   newstr: kept pieces joined again with delimiter
+%
+% Notes:
+% Splitting also trims whitespace around the delimiter, and the first
+%   character of delimiter is regex-escaped (see strsplit2).
  
 tokens = regexp(string, ['\s*\' delimiter '\s*'], 'split');
 

@@ -1,5 +1,5 @@
 function [rTime, cmtk_out_filename] = cmtk_getruntime(strpattern, txt2match)
-% cmtk_getruntime: reads slurm output file 
+% cmtk_getruntime: reads slurm output file
 %   and finds job duration (number after string 'Elapsed time is ')
 %
 % Usage:
@@ -7,8 +7,20 @@ function [rTime, cmtk_out_filename] = cmtk_getruntime(strpattern, txt2match)
 %       cmtk_getruntime(strpattern, txt2match)
 %
 % Args:
-%   strpattern: string pattern to find *.slurm files
-%   txt2match: pattern of characters to find within *.slurm files
+%   strpattern: text that must appear in the output file names
+%       (default, [], every file in the current folder)
+%   txt2match: text printed right before the run time
+%       (default, 'Elapsed time is ')
+%
+% Returns:
+%   rTime: run time in whole seconds per file (NaN if the text was not
+%       found exactly once), sorted by the job number in the file name
+%   cmtk_out_filename: file names, in the same sorted order as rTime
+%
+% Notes:
+% NOTE (known issue, not yet fixed): the default pattern also lists folders
+%   and non-slurm files, an empty file makes the function error, and job
+%   numbers are parsed with the same fragile rule as cmtk_read_slurm_out.
 
 if ~exist('strpattern', 'var') || isempty(strpattern)
     strpattern = [];

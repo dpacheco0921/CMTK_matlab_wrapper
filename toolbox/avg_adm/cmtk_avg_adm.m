@@ -4,14 +4,15 @@ function cmtk_avg_adm(inputfiles, oref_name, oImDir, ...
 %   based on a set of input xforms using CMTK function 'avg_adm'.
 %
 % Usage:
-%   cmtk_avg_adm(refiter, inputfiles, oref_name, oImDir)
+%   cmtk_avg_adm(inputfiles, oref_name, oImDir, oIMFormat, numericType)
 %
 % Args:
 %   inputfiles: select files to be used as inputs
+%       (text or cell of text matched in the xform folder names)
 %       (otherwise it uses all files in the hardcoded input folder)
 %		(basically all xforms within 'ixformdir')
 %   oref_name: name of target reference image
-%		(default, 'nsybIVA')
+%		(default, 'nsybIVA_1')
 %   oImDir: output directory
 %		(default, ['.', filesep, 'average_im'])
 %   oIMFormat: output image format ('.nrrd' or '.nii')
@@ -20,7 +21,15 @@ function cmtk_avg_adm(inputfiles, oref_name, oImDir, ...
 %       ('--byte (8 bits) --ushort (16), --float (32), --double (64)')
 %       (default, '')
 %
+% Returns:
+%   (none; writes the average image and the average xform to disk)
+%
 % Notes:
+% NOTE (known issue, not yet fixed): (1) giving oref_name that already
+%   contains the extension makes strrep error; (2) the output is always
+%   written with the 'NRRD:' prefix, even with '.nii'; (3) the verbose mode
+%   used for coexecuter returns status 1, so 'File Failed' is always printed;
+%   (4) it does not stop if no xform files were found.
 % home directory needs to be organized as follows:
 % 	(subdirectory with raw input images: images)
 % 	(subdirectory with transformations: registration)
@@ -69,7 +78,8 @@ if contains(oref_name, oIMFormat)
    oref_name = strrep(oref_name, oIMFormat);
 end
 
-% hardcoded input transformations
+% hardcoded input transformations: warp .list folders (optionally filtered
+%   by inputfiles) are the deformations that avg_adm will average
 ixformdir = ['.', filesep, 'registration', filesep, 'warp'];
 ixform = dir(ixformdir);
 ixform = str2match('.list', ixform);

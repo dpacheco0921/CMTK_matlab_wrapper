@@ -1,13 +1,16 @@
 function rperm_gIdx = gen_group_shuffle_n(t_n, t_group, perm_n)
-% gen_group_shuffle_n: function that generates random combinations of numbers using
-%   the universe set: 1:t_n, and producing sets of size numel(t_group) it iterates perm_n times
+% gen_group_shuffle_n: random group-1 label shuffles for a permutation test.
+%   Input: universe size, observed group-1 indices, number of shuffles.
+%   Output: perm_n x numel(t_group) matrix of shuffled group-1 indices, none
+%   equal to the observed grouping.
 %
 % Usage:
-%   rperm_gIdx = gen_group_shuffle(t_n, t_group, perm_n)
+%   rperm_gIdx = gen_group_shuffle_n(t_n, t_group, perm_n)
 %
 % Args:
 %   t_n: 1:t_n, universe of numbers
-%   t_group: subset size
+%   t_group: row vector of the observed group-1 indices (its length sets the
+%       subset size, and it is the grouping to exclude from the shuffles)
 %   perm_n: number of permutations
 %
 % Outputs:
@@ -16,6 +19,11 @@ function rperm_gIdx = gen_group_shuffle_n(t_n, t_group, perm_n)
 % Notes:
 % unlike gen_group_shuffle, this keeps a constant output rperm_gIdx size,
 % but can be slower because of while loop
+% rng('shuffle') reseeds the global random generator on every call, so
+%   results are not reproducible.
+% NOTE (known issue, not yet fixed): the while loop never ends if the
+%   only possible subset is the observed one (e.g. t_n == numel(t_group)).
+%   Rows may repeat across shuffles (callers apply unique(..., 'rows')).
 
 rng('shuffle');
 

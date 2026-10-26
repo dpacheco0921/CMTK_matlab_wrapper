@@ -1,19 +1,21 @@
 function cmtk_write_init_affine(iparams, oDir)
-% cmtk_write_init_affine: write initial_affine text file
-% 
+% cmtk_write_init_affine: write a CMTK initial-affine 'registration' text
+%   file into oDir (no outputs returned)
+%
 % Usage:
 %   cmtk_write_init_affine(iparams, oDir)
 %
 % Args:
-%   iparams: deafult initial affine settings
+%   iparams: struct with initial affine settings to override
 %       (xlate, [0 0 0])
 %       (rotate, [0 0 0])
-%       (scale, [0 0 0])
+%       (scale, [1 1 1], 1 = no scaling)
 %       (shear, [0 0 0])
 %       (center, [0 0 0])
-%   oDir: output directory
+%   oDir: output directory (the file is written as oDir/registration)
 %
 % Notes
+% values are written with num2str, i.e. about 4 decimals.
 % 2021-01-20: upated default scale to [1 1 1].
 
 cparams.xlate = [0 0 0];
@@ -50,7 +52,8 @@ fprintf(fid, ['\tcenter ', num2str(cparams.center(1)),' ', ...
 fprintf(fid, '}\n\n');
 fclose(fid);
 
-% make it compatible to unix format
+% make it compatible to unix format (flag 1 = convert Windows CRLF line
+%   endings to Unix LF, which CMTK expects)
 unix2dos([oDir, filesep, 'registration'], 1)
 
 end

@@ -12,11 +12,12 @@ Also, it has functions to perform deformation-based morphometry (implemented as 
 
 # Usage
 
-- Edit regrelated_directoriestoedit.m file.
+- Copy toolbox/utilities/user_defined_info/regrelated_directoriestoedit.m to regrelated_directories.m (same folder; the function inside is already named regrelated_directories and every script calls that name), then edit the copy.
+    - regrelated_directories.m is git-ignored because it holds machine-specific paths.
     - provide user defined directories, in particular folder where atlases' images will be.
 - see cmtk_demo.m
     - download demo data containing:
-        - reference image: nsybIVAidownsample.nrrd
+        - reference image: nsybIVAidownsampled.nrrd
         - 'images' folder with floating images
     - use batch_cmtkperfile to run batches of images per folder
 
@@ -45,6 +46,12 @@ This pipeline requires the following packages:
     - [https://github.com/dpacheco0921/StackViewer](https://github.com/dpacheco0921/StackViewer)
 - download pu_cluster_interface (it requires the user defined temporary folder to save job parameters)
     - [https://github.com/dpacheco0921/pu_cluster_interface](https://github.com/dpacheco0921/pu_cluster_interface)
+
+# Other requirements (not in this repo)
+
+- MATLAB toolboxes: Parallel Computing (parpool utilities), Image Processing (e.g. medfilt3, imerode), Statistics (ttest2).
+- Functions called from the repositories above (StackViewer / pu_cluster_interface): operationIm2Im, mat2uint16, mat2uint8, interp3DxT, user_defined_directories, server_interface, getclus_taskid.
+- batch_cmtkperfile only writes the .slurm job file for cluster runs; submit it manually with sbatch from the job folder.
 
 # Acknowledgements
 

@@ -1,7 +1,9 @@
 function [p, registration_params] = ...
     cmtk_editsteps(reg_edit, p, registration_params)
-% cmtk_editsteps: edit steps of registration to run
-%   encoded on the decimals of reg_edit
+% cmtk_editsteps: switch registration steps on/off from a text code; reads reg_edit and
+%   sets p.agate, p.wgate, p.jgate, p.rgate_ch2, p.floatiDir_2, p.ch2chSu, p.redo, p.ragate and
+%   registration_params.initf2use; returns the edited p and registration_params.
+%   (the codes are looked for as substrings of the string reg_edit)
 %
 % Usage:
 %   [p, registration_params] = ...
@@ -12,18 +14,23 @@ function [p, registration_params] = ...
 %       to run.
 %       ('a', do affine)
 %       ('~a', do not affine)
-%       ('a', do affine)
-%       ('~a', do not affine)
-%       ('ia', do intial affine)
+%       ('ia', do initial affine)
 %       ('w', do warp)
 %       ('~w', do not warp)
 %       ('j', generate jacobian image)
 %       ('~j', do not generate jacobian image)
-%       ('rch_2', register channel 2, in )
-%       ('rch_3', register channel 3)
-%       ('rch_4', register channel 4)
+%       ('rch2', reformat channel 2, from images_ch2)
+%       ('rch3', reformat channel 3, from images_ch3)
+%       ('rch4', reformat channel 4, from images_ch4)
+%       ('~rch2', '~rch3' or '~rch4', reformat channel 1 only)
 %       ('redo', redo)
-%       ('ar', do affine variant)
+%       ('ar', do affine variant and replace the old affine)
+%       ('ar2', do affine variant but keep the old affine)
+%       ('~ar', do not do the affine variant)
+%       (combine with any separator, e.g. 'a_~w'; the codes are not
+%       delimited, so 'ia' and 'ar' also contain 'a')
+%       NOTE (known issue, not yet fixed): because of substring matching,
+%       'ia' and 'ar' also set p.agate = 1.
 %   p: controls which files to load, details of server usage, etc
 %   registration_params: registration parameters
 %
@@ -64,7 +71,8 @@ if ~isempty(reg_edit)
         p.jgate = 1;
     end
     
-    % reformat extra channels
+    % reformat extra channels (the code is 'rch2', 'rch3' or 'rch4', no underscore);
+    %   only one extra channel can be selected, the first match wins
     if contains(reg_edit, '~rch2') || ...
             contains(reg_edit, '~rch3') || ...
             contains(reg_edit, '~rch4')

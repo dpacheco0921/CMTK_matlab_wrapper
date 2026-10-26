@@ -1,4 +1,8 @@
-%% Params used for fly to ref registration
+%% Params for fly-to-atlas registration (affine + warp) of every image in ./images to 'nsybIVAi.nrrd', skipping files containing 'cb'
+% Sets p.* (refiDir, refImSu, floatImSu, float2reject, floatiDir, gates) and iparams.* (G=170, J=1e-3, E=1); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
+% Intended for fly2ref registration of an image and its mirror image; it sets p.jgate = 0 and p.rgate_ch2 = 0, so (contrary to older docs) it does NOT reformat channel 2 or generate the jacobian unless you add the 'j' / 'rch2' edits.
+% Differs from fly2ref_params.m only in floatImSu ([]), floatiDir ('./images') and the missing p.iFloat fields.
 % notes
 
 global p

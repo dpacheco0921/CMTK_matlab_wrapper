@@ -1,7 +1,10 @@
 function [chunks, nchunks, chunk_idx] = ...
     ppool_makechunks(chunksiz, corenum, ...
     vect_length, vect_init)
-% ppool_makechunks: split a vector into chunks that 
+% ppool_makechunks: split a vector into chunks for parpool.
+%   Input: chunk size, core number, vector length, first index.
+%   Output: chunk start indices, number of chunks, chunk starts grouped per core batch.
+%   It splits a vector into chunks that 
 %   could be then used by parpool to run data chunk by chunk
 %
 % Usage:
@@ -15,7 +18,7 @@ function [chunks, nchunks, chunk_idx] = ...
 %   vect_length: length of vector to split
 %   vect_init: first index of this vector
 % 
-% Returns
+% Returns:
 %   chunks: first vector index per chunk
 %   nchunks: number of chunks
 %   chunk_idx: chunks indeces grouped in corenum batches

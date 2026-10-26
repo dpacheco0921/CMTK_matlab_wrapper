@@ -1,31 +1,40 @@
 function [animalname, animalnum, repnum, str_length] = ...
     rdir_namesplit(basename, suffixend, ...
     fisuffix, fi2reject, fi2match, nametype)
-% rdir_namesplit: function to gather all files 
-%   within directory and split the name into parts
+% rdir_namesplit: list files in the current directory (recursively) and split
+%   each name on '_' into parts. Input: name filters and name type.
+%   Output: animal names, animal numbers, repetition numbers, part lengths.
 %
 % Usage:
-%   [animalname, animalnum, repnum] = ...
+%   [animalname, animalnum, repnum, str_length] = ...
 %      rdir_namesplit(basename, suffixend, ...
 %      fisuffix, fi2reject, fi2match, nametype)
 %
 % Args:
-%   basename: file name pattern
-%   suffixend: file format
-%   fisuffix: extra pattern to attach to suffixend
-%   fi2reject: pattern to reject files
-%   fi2match: pattern to accept files
-%   nametype: type of animalname to output
+%   basename: file name pattern (required)
+%   suffixend: file format (optional, default '.tif')
+%   fisuffix: extra pattern to attach to suffixend (optional)
+%   fi2reject: pattern to reject files (required in practice, use [] for none)
+%   fi2match: pattern to accept files (optional)
+%   nametype: type of animalname to output (optional, default 0)
+%       (0: animalname, animalnum, repnum from parts 1, 2, 3)
+%       (1: animalname = part1_part2, repnum from part 3)
+%       (2: animalname = part1_part2_part3, no numbers)
+%       (3: animalname, animalnum from parts 1, 2; repnum from part 4)
 %
 % Returns:
 %   animalname: animal name
 %   animalnum: animal number
 %   repnum: repetition number
-%   str_length: string length for first file
+%   str_length: string length of each part, one row per file
 %
 % Notes:
 % Assumes files names have the following struture:
 %   (year|month|day)_(animalnum)_(trialnum/repnum)
+% Searches the current directory ('.'), so run it from the folder of interest.
+% NOTE (known issue, not yet fixed): files with fewer '_' parts than the
+%   chosen nametype expects, or a mix of 3 and 4 parts with nametype 1,
+%   make it error.
 
 if ~exist('suffixend', 'var') || isempty(suffixend)
     suffixend = '.tif';

@@ -1,6 +1,14 @@
 function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
     fIm2sel, memreq, jobtime, regparams_edits, corenum)
-% batch_cmtkperfile: Running registration Using MatLab
+% batch_cmtkperfile: build a registration job from a params script plus edits and run it locally or write a SLURM file.
+%   Inputs: the args below. Outputs: no return values; writes <date>_<time>_cmtk.mat
+%   (and a .slurm file for 'spock'/'della') into <temporary_dir>/jobsub/regrel.
+%
+% IMPORTANT: for 'spock'/'della' this function only WRITES the .slurm file.
+%   It does not call sbatch, so you must cd to <temporary_dir>/jobsub/regrel
+%   and run sbatch on that file yourself.
+% IMPORTANT: run it from the main data folder (the folder that contains
+%   'images'); that folder is saved as p.cDir and files are searched from it.
 %
 % Usage:
 %   batch_cmtkperfile(rIm2sel, serverid, regparams, ...
@@ -9,18 +17,20 @@ function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
 % Args:
 %   rIm2sel: index of reference image to use
 %   serverid: server ID 'int', 'spock', 'della'
-%       (deafult, 'spock')
+%       (default, 'spock')
 %   regparams: string defining script to generate 
 %       registration parameters
 %       **deprecated, this variable used to go from 0-7**
-%       (deafult, [], default registration parameters *0*)
+%       (default, [], default registration parameters *0*)
 %       (refgen_params, specific for ref generation *1*)
 %       (seg2fly_params, specific for segment to whole fly registration *3*)
 %       (fly2ref_params, specific for whole fly to atlas registration *4*)
 %       (ref2ref_params, specific for atals to atlas registration *5*)
 %       (float2fixref_params, any im to fixed ref (general) *6*)
-%       (fly2ref_multi_params, fly2ref registration for im and mirror im 
-%           (reformats 2nd channel and generates jacobian by default) *7*)
+%       (fly2ref_multi_params, fly2ref registration for im and mirror im *7*)
+%           NOTE: despite older docs, this script sets p.jgate = 0 and
+%           p.rgate_ch2 = 0, so it does NOT reformat channel 2 or generate
+%           the jacobian by default (use the 'j' and 'rch2' edits).
 %   fIm2sel: index of floating image to use
 %   memreq: memory requested per job
 %   jobtime: time requested per job
@@ -33,59 +43,78 @@ function batch_cmtkperfile(rIm2sel, serverid, regparams, ...
 %       to run (see cmtk_editsteps)
 %           ('a', do affine)
 %           ('~a', do not affine)
-%           ('a', do affine)
-%           ('~a', do not affine)
-%           ('ia', do intial affine)
+%           ('ia', do initial affine)
 %           ('w', do warp)
 %           ('~w', do not warp)
 %           ('j', generate jacobian image)
 %           ('~j', do not generate jacobian image)
-%           ('rch_2', register channel 2, in )
-%           ('rch_3', register channel 3)
-%           ('rch_4', register channel 4)
+%           ('rch2', reformat channel 2, from images_ch2)
+%           ('rch3', reformat channel 3, from images_ch3)
+%           ('rch4', reformat channel 4, from images_ch4)
+%           ('~rch2', '~rch3' or '~rch4', reformat channel 1 only)
 %           ('redo', redo)
-%           ('ar', do affine variant)
+%           ('ar', do affine variant and replace the old affine)
+%           ('ar2', do affine variant but keep the old affine)
+%           ('~ar', do not do the affine variant)
+%           (steps can be combined in one string, e.g. 'a_~w' or 'a_w')
+%           NOTE (known issue, not yet fixed): steps are matched by
+%           substring, so 'ia' and 'ar' also contain 'a' and also turn
+%           p.agate on.
 %   corenum: number of cores to request
 %   	(default: 4)
 % internal variable with important parameters
 %   p (controls which files to load, details of server usage, etc)
 %         %%%%%% directory related %%%%%%
 %        (cDir: current directory)
-%           (deafult, 'pwd')
+%           (default, 'pwd')
 %        (redo: redo flag)
-%           (deafult, 0)
+%           (default, 0)
 %        (floatiDir: default floating image directory)
-%           (deafult, ['.', filesep, 'images'])
+%           (default, ['.', filesep, 'images'])
 %        (floatiDir_2: default floating image_ch2 directory)
-%           (deafult, ['.', filesep, 'images_ch2'])
+%           (default, ['.', filesep, 'images_ch2'])
 %        (floatImSu: floating image suffix)
-%           (deafult, [])
+%           (default, [])
 %        (float2reject: floating image to reject)
-%           (deafult, [])
+%           (default, [])
 %        (refiDir: default reference directory)
-%           (deafult, '.')
+%           (default, '.')
 %        (refImSu: reference image suffix)
-%           (deafult, [])
+%           (default, [])
 %         %%%%%% function related %%%%%%
 %        (wgate: gate to do warping)
-%           (deafult, 0)
+%           (default, 0)
 %        (agate: gate to do affine)
-%           (deafult, 1)
+%           (default, 1)
 %        (jgate: gate to get jacobian)
-%           (deafult, 0)
+%           (default, 0)
 %        (rgate_ch2: gate to reformat additional channel)
-%           (deafult, 0)
+%           (default, 0)
 %        (ragate: gate to do affine refinement)
-%           (deafult, 0)
+%           (default, 0)
 %        (ref2refreg: gate to register the reference image to itself too)
-%           (deafult, 0)
+%           (default, 0)
 %        (ch2chSu: different suffix for channels, {2} and replaces {1})
-%           (deafult, {'_01.nrrd', '_02.nrrd'})
+%           (default, {'_01.nrrd', '_02.nrrd'})
 %        (refcha: reference channel: 1 red; 2 green)
-%           (deafult, 1)
-%        (ar: reformat image after affine registration)
-%           (deafult, 1)
-% 
+%           (default, 1)
+%        (ar: reformat image after each registration stage (affine, warp),
+%           so the registered image can be inspected as soon as that stage
+%           finishes, not only at the end)
+%           (default, 1)
+%        (iFloat: mask image used by the affine-refine variant (p.ragate ~= 0),
+%           in reference coordinates; only set by fly2ref_params.m)
+%           (no default)
+%        (iFloat_dir: directory of iFloat)
+%           (no default)
+%        NOTE (known issue, not yet fixed): p.iFloat and p.iFloat_dir have no
+%           default, so the 'ar' edit with a params script that does not define
+%           them errors in cmtk_perfile.m.
+%        (ref2refreg: gate to register the reference image to itself too,
+%           done only by the last job of the array; used to build atlases)
+%           (default, 0)
+%        (agate/wgate/jgate/rgate_ch2/ragate: see 'function related' above)
+%
 % Notes:
 %
 % it requires that the script is run in the main data folder
@@ -154,8 +183,12 @@ if ~exist('regparams_edits', 'var') || ...
     regparams_edits = {[], []};
 end
 
+% NOTE (known issue, not yet fixed): on Windows/Mac the corenum argument is
+%   always overwritten by the local worker count (needs the Parallel
+%   Computing Toolbox), even when serverid is 'spock' or 'della', so the
+%   --cpus-per-task written to the .slurm file is the laptop core count.
 if ispc || ismac
-    
+
     % running locally
     ppobj = parcluster('local');
     corenum = ppobj.NumWorkers;
@@ -194,6 +227,12 @@ tDir = [temporary_dir, 'jobsub', filesep, 'regrel'];
 iparams = cmtk_paramgen;
 
 % update registration parameters
+% the params script (see ./toolbox/cmtk_parameters) runs in this workspace and
+%   edits the variables 'p' and 'iparams' defined above.
+% NOTE (known issue, not yet fixed): most params scripts start with
+%   'global p', which conflicts with the local 'p' defined above (only
+%   reg_params_demo, float2fixref_params and refgen_params_newfotb do not);
+%   'eval' of 'run <name>' also breaks if the script path contains spaces.
 if ~isempty(regparams)
     eval(['run ' regparams])
 end
@@ -214,6 +253,13 @@ iparamscell
     getinputfiles(fIm2sel, rIm2sel, p.floatiDir, p.floatImSu, ...
     p.refiDir, p.refImSu, p.float2reject);
 p
+% NOTE (known issue, not yet fixed): if no floating or reference image was
+%   found, the code still saves the mat file and submits (for a cluster this
+%   writes '--array=1-0', which sbatch rejects; locally nothing runs).
+
+% move to the job folder (jobsub/regrel) so the parameter mat file and the
+%   .slurm file are written there; cmtk_perfile later loads the mat file
+%   from this folder and moves back to p.cDir to find the images.
 cd(tDir)
 
 % generate mat and executable file name
@@ -224,7 +270,14 @@ save([param_file, '_cmtk.mat'], ...
     'refIm', 'refFol', 'p', ...
     'iparamscell')
 
-% update fIm2sel based on the final number of floatIm
+% numT = number of jobs (one per SLURM array task / one per local loop
+%   iteration); task number taskID (1..numT) picks which floating image
+%   (and reference image) cmtk_perfile runs. It is the larger of the two
+%   counts so one reference with many floats, or many references with one
+%   float, both work.
+% NOTE (known issue, not yet fixed): if there are several references and a
+%   different number (>1) of floating images, the task indexing in
+%   cmtk_perfile (select_files_dirs) fails.
 numT = max([numel(floatIm), numel(refIm)]);
 
 % Executing File
@@ -246,7 +299,9 @@ function [floatIm, floatFol, refIm, refFol] = ...
 % Usage:
 %   [floatIm, floatFol, refIm, refFol] = ...
 %       getinputfiles(fIm2sel, rIm2sel, floatiDir, floatImSu, ...
-%       refiDir, refImSu)
+%       refiDir, refImSu, float2reject)
+%
+% Outputs: cell arrays of file names and folders for floating and reference images.
 %
 % Args:
 %   fIm2sel: indeces of floating images to use
@@ -357,15 +412,20 @@ function submitjob(name, tDir, ...
 %   username: used to update directories to use
 %   corenum: maximun number of cores to use per task
 %   serverid: server ID 'int', 'spock', 'della'
-%       (deafult, 'spock')
+%       (default, 'spock')
 %   numT: number of jobs
 %   memreq: RAM memory to request
-%       (deafult, 12)
+%       (default, 12)
 %   agate: gate for affine
 %   wgate: gate for warping
 %   userdomain: domain to use for username
 %   jobtime: time requested per job
 
+% NOTE: this function only writes the .slurm file for 'spock'/'della'; it
+%   never calls sbatch. Submit it by hand from the folder it was written to.
+% NOTE (known issue, not yet fixed): the matlab command written below has no
+%   '; exit', so a finished or failed job may keep MATLAB open until the
+%   SLURM time limit.
 functype = 'cmtk_perfile';
 
 if isempty(jobtime)

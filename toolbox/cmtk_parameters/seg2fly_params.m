@@ -1,4 +1,6 @@
-%% Params used for the segment to fly registration
+%% Params to register a segment (partial brain image, '_s_') to the whole fly image ('_w_') in the current folder: mostly rigid, small grid
+% Sets p.* (ref2refreg, refImSu, floatImSu, floatiDir, refiDir, agate, wgate, redo) and iparams.* (G=20, R=2, J=1e-2, E=1e-1, aX=13, wX=8); no outputs.
+% iparams.G = control point grid spacing of the warp (image units, um); larger = coarser, smoother deformation (see cmtk_paramgen).
 % Notes
 % 1) this registration should mostly be rigid so dofs of 3, 6, and 9 should suffice
 % 2) center of mass does only translation for initial affine which is what

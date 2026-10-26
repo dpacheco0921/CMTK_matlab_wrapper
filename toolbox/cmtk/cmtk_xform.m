@@ -14,7 +14,8 @@ function [iObject, err_] = cmtk_xform(iObject, refi, refo, iparams)
 %           (default, 10^-1)
 %       (fixgate: gate to try to fix points that failed)
 %           (default, 1)
-%       (presicion: round all digits bellow ()-1 this values
+%       (presicion: coordinates are rounded to 1/presicion before mapping;
+%           the field name is misspelled in the code, 'precision' is meant)
 %           (default, 10^3)
 %       (siz_: steps in ibpars.jitter to explore possible solutions for failed points)
 %           (default, 1:9)
@@ -31,9 +32,11 @@ function [iObject, err_] = cmtk_xform(iObject, refi, refo, iparams)
 %
 % Returns:
 %   iObject: reformated obj (tree, trees, xyz matrix)
-%   err_: error flag
+%   err_: error flag (1 if some points could not be mapped, even after jitter)
 %
 % Notes:
+% NOTE (known issue, not yet fixed): the message '*** not correcting failed
+%   points ***' is also printed when no point failed.
 % for non-linear registration, certain points may not exist, therefore I
 %   added a jitter component to find points in the vicinity of the point to
 %   register that have a matching point in the reference coordinates.
@@ -77,6 +80,9 @@ xyz = round(xyz.*ibpars.presicion)./ibpars.presicion;
 [xyz_reg, err_, idx_] = cmtk_streamxform(xyz, refi, refo, ibpars);
 
 % deal with failed points: solution add jitter and map nearby point
+% why: with non-linear warps some points fall outside the transformation, so
+%   we nudge each failed point by small steps (each row below is one
+%   direction, multiplied by jitter * step size) until a nearby point maps
 jitter_m = [-1 0 0; 0 -1 0; 0 0 -1; ...
     -1 -1 0; 0 -1 -1; -1 0 -1; -1 -1 -1; 0 0 0];
 
@@ -91,10 +97,12 @@ if err_ && ibpars.fixgate
     fprintf('Adding jitter to map some failed points\n')
     
     for i = 1:size(xyz_2cor, 1)
-        
+
         fprintf(['Point # ', num2str(i), ': '])
+        % k = 1 means "all jittered copies still failed"; l = current step size
         k = 1; l = 1;
-        
+
+        % try larger and larger jitter until at least one copy maps
         while k == 1 && l <= numel(ibpars.siz_)
             fprintf([num2str(l), ' '])
             xyz_temp = xyz_2cor(i, :);
@@ -105,6 +113,7 @@ if err_ && ibpars.fixgate
             l = l + 1;
         end
         
+        % keep the first jittered copy that mapped; otherwise mark point as NaN
         if k == 0
             k_idx = setdiff(1:size(xyz_reg_, 1), k_idx);
             xyz_2cor(i, :) = xyz_reg_(k_idx(1), :);

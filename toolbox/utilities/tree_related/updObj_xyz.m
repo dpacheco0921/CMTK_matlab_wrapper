@@ -1,9 +1,9 @@
 function iObject = updObj_xyz(iObject, i_xyz)
-% updObj_xyz: function that updates XYZ coordinates 
-%   from tree/matrix/mesh
+% updObj_xyz: replace XYZ coordinates of a tree, matrix, or mesh.
+%   Input: object, new [n, 3] coordinates. Output: the updated object.
 % 
 % Usage:
-%   updObj_xyz(iObject, i_xyz)
+%   iObject = updObj_xyz(iObject, i_xyz)
 %
 % Args:
 %   iObject: tree/matrix/mesh obj
@@ -14,6 +14,8 @@ function iObject = updObj_xyz(iObject, i_xyz)
 %
 % Notes:
 % compatible with tree format from https://github.com/cuntzlab/treestoolbox
+% Only single objects are handled (not the cell of traces that getObj_xyz
+%   can return); for non-struct input the object is simply replaced by i_xyz.
 
 if isstruct(iObject)
     

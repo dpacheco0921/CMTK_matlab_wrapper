@@ -1,7 +1,8 @@
 function input_struct = loparam_updater(...
     input_struct, input_var, sel_field)
-% loparam_updater: function that updates fields of input structure, or
-%   sub-fields of selected field from the same structure
+% loparam_updater: overwrite default parameters with user-supplied ones.
+%   Input: default struct, struct of new values, optional sub-field name.
+%   Output: the default struct with matching fields updated.
 % 
 % Usage:
 %   input_struct = loparam_updater(...
@@ -16,6 +17,10 @@ function input_struct = loparam_updater(...
 %   input_struct: updated structure
 %
 % Notes:
+% Only fields that already exist in input_struct (or in its sel_field
+%   sub-struct) are copied; any other field in input_var is ignored without
+%   a warning, so a misspelled parameter name has no effect. Only the first
+%   element of input_var is used.
 
 if exist('input_var', 'var') && ~isempty(input_var)
     if exist('sel_field', 'var') && ~isempty(sel_field)

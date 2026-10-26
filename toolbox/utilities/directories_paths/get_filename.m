@@ -1,11 +1,13 @@
 function filename = get_filename(path, no_ext)
 %GET_FILENAME Returns the filename in a path. The path need not exist.
+%   Input: path string or cell of path strings, optional no-extension flag.
+%   Output: file name string (or cell of them).
 % Usage:
 %   filename = get_filename(path)
 %   filename = get_filename(paths) % cell array of paths
 %   filename = get_filename(_, true) % no extension
 %
-% See also: get_ext, fileparts
+% See also: fileparts
 
 if nargin < 2
     no_ext = false;

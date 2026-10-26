@@ -1,5 +1,6 @@
 function status_ = nrrdWriter(filename, matrix, pixelspacing, origin, encoding)
-% nrrdWriter: function to write nrrd files
+% nrrdWriter: write a 2D/3D matrix as a nrrd (or nhdr) file with voxel size in microns.
+%   Input: file name, matrix, voxel size, origin, encoding. Output: write status.
 %
 % Usage:
 %   status_ = nrrdWriter(filename, matrix, pixelspacing, origin, encoding)
@@ -7,16 +8,21 @@ function status_ = nrrdWriter(filename, matrix, pixelspacing, origin, encoding)
 % Args:
 %   filename: 'myimage.ext' - 'veins.nrrd'
 %   matrix: data - Matlab matrix
-%   pixelspacing: boxel size
+%   pixelspacing: voxel size, [x y z] in microns
 %   origin: point from the image is generated
 %   encoding: raw, ascii, gzip
 %
 % Returns:
-%   status_
+%   status_: output of the last write (number of elements/bytes written)
 %
 % Notes:
 % Copied and edited from:
 % https://www.mathworks.com/matlabcentral/fileexchange/48621-nrrdwriter-filename--matrix--pixelspacing--origin--encoding-
+% Source: MathWorks File Exchange entry 48621 (link above); original author
+%   and licence text not recorded in this file.
+% NOTE (known issues, not yet fixed): gzip temp files are deleted with
+%   'rm -f', which does nothing on Windows (no error). fopen failures are
+%   not checked.
 
 % This line gets the path, name and extension of our file:
 % pathf = /home/mario/.../myfile.myext
@@ -166,11 +172,10 @@ switch (metaType)
 end
    
 function status_ = writeData(fidIn, matrix, datatype, encoding)
-% setDatatype: Determine the datatype
-% From mtype (matlab) to outtype (NRRD)
+% writeData: write the matrix to the open nrrd file with the chosen encoding
 %
 % Usage:
-%   datatype = setDatatype(metaType)
+%   status_ = writeData(fidIn, matrix, datatype, encoding)
 %
 % Args:
 %   fidIn: is the open file we're overwriting

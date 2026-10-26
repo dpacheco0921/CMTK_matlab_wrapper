@@ -1,5 +1,6 @@
 function status_ = coexecuter(command2run, verbose)
-% coexecuter: executes commands from terminal
+% coexecuter: runs a system command (or each command in a cell) in the OS shell.
+%   Input: command string or cell of strings, verbose level. Output: exit status.
 %
 % Usage:
 %   coexecuter(command2run, verbose)
@@ -7,14 +8,20 @@ function status_ = coexecuter(command2run, verbose)
 % Args:
 %   command2run: command to run, can be a string or cell, 
 %       if cell it executes each cell separately (PC/linux/Mac compatible)
-%   verbose: verbose options
+%   verbose: verbose options (default, 1)
 %       (0 = no verbose)
-%       (1 = verbose after it is done)
-%       (2 = verbose as it runs)
-%       (3 = verbose as it runs)
+%       (1 = show output after it is done)
+%       (2 = show output as it runs, exit status is NOT captured)
+%       (3 = show output as it runs, exit status is captured)
 %
 % Returns:
-%   status_: command exit status
+%   status_: command exit status (0 = success), one value per command
+%       when command2run is a cell
+%
+% NOTE (known issue, not yet fixed): with verbose = 2 the returned status
+%   is always 1 (even on success) and 'successful' is not printed, because
+%   the status is not captured; use verbose = 3 if the status is needed.
+%   If command2run is empty, status_ is never assigned.
 %
 % Notes:
 % see unix, dos

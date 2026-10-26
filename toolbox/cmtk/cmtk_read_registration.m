@@ -6,8 +6,7 @@ function params = cmtk_read_registration(txtfname)
 %   params = cmtk_read_registration(txtfname)
 %
 % Args:
-%   txtfname: name of txt file
-%   f2use: files to run
+%   txtfname: name of txt file (a CMTK 'registration' file)
 %
 % Returns:
 %   params: registration values for each dof
@@ -18,6 +17,9 @@ function params = cmtk_read_registration(txtfname)
 %   params.center
 % 
 % Notes:
+% NOTE (known issue, not yet fixed): parsing is by line position, not by
+%   keyword; a file with 8 lines is taken as an initial affine and any other
+%   line count as a regular affine, so other layouts are mis-read.
 % hardcoded txt file structure:
 % ! TYPEDSTREAM 2.4
 % 
@@ -33,7 +35,7 @@ function params = cmtk_read_registration(txtfname)
 % 	}
 % }
 
-% read text file
+% read text file (one line per row; columns are the first four words)
 [~, b, c, d] = textread(txtfname, '%s %s %s %s');
 
 if numel(b) == 8
